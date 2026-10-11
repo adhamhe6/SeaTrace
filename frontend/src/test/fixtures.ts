@@ -123,9 +123,8 @@ export function makeVessel(over: Partial<VesselDetail> = {}): VesselDetail {
 }
 
 export function makeVesselSummary(over: Partial<VesselSummary> = {}): VesselSummary {
-  const { equipment: _equipment, ...rest } = makeVessel();
-  void _equipment;
-  return { ...rest, ...over };
+  const { equipment, ...rest } = makeVessel();
+  return { ...rest, equipment_count: equipment.length, ...over };
 }
 
 export function makeFleetSummary(over: Partial<FleetSummary> = {}): FleetSummary {
@@ -293,9 +292,10 @@ export function makeIncidentWindow(over: Partial<IncidentWindow> = {}): Incident
     value: 80 + i * 0.5,
     quality: 'good' as const,
   }));
-  const rpm = [...Array.from({ length: 21 }, (_, i) => i), ...Array.from({ length: 20 }, (_, i) => 40 + i)].map(
-    (i) => ({ ts: iso(i), value: 100 + i, quality: 'good' as const }),
-  );
+  const rpm = [
+    ...Array.from({ length: 21 }, (_, i) => i),
+    ...Array.from({ length: 20 }, (_, i) => 40 + i),
+  ].map((i) => ({ ts: iso(i), value: 100 + i, quality: 'good' as const }));
   return {
     vessel_code: 'VES-001',
     vessel_name: 'MV Aurora Tide',
@@ -370,7 +370,12 @@ export function makeAnomaly(over: Partial<AnomalyAssessment> = {}): AnomalyAsses
     status: 'watch',
     score: 0.64,
     explanation: 'Watch: vibration 3.32 mm/s is +1.7 robust sigma from its 300s baseline.',
-    features: { vibration_z: 1.67, temp_slope_c_per_min: 1.744, reference_samples: 103, vibration_sigma: null },
+    features: {
+      vibration_z: 1.67,
+      temp_slope_c_per_min: 1.744,
+      reference_samples: 103,
+      vibration_sigma: null,
+    },
     alarm_active: false,
     evaluated_at: new Date().toISOString(),
     disclaimer: 'Experimental statistical heuristic on simulated data.',

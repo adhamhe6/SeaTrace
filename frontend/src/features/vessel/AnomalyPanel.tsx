@@ -92,8 +92,9 @@ function AnomalyBody({ a }: { a: AnomalyAssessment }) {
       </div>
       {a.status === 'insufficient_data' ? (
         <p className="small" role="status">
-          Not enough recent telemetry to assess this engine yet. The assessment needs a baseline of stored
-          samples and fresh data; it will appear automatically once enough has been collected.
+          Not enough recent telemetry to assess this engine yet. The assessment needs a baseline of
+          stored samples and fresh data; it will appear automatically once enough has been
+          collected.
         </p>
       ) : null}
       {a.status === 'not_applicable' ? (
@@ -117,7 +118,9 @@ function AnomalyBody({ a }: { a: AnomalyAssessment }) {
             {features.map(([key, value]) => (
               <tr key={key}>
                 <td>{FEATURE_LABEL[key] ?? key}</td>
-                <td className="is-right is-mono">{value === null ? '—' : formatNumber(value, 3)}</td>
+                <td className="is-right is-mono">
+                  {value === null ? '—' : formatNumber(value, 3)}
+                </td>
               </tr>
             ))}
           </tbody>

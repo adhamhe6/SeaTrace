@@ -30,7 +30,10 @@ describe('route guard', () => {
     await signInAs(user, 'operator', 'secret');
     expect(await screen.findByRole('heading', { name: 'Alarm center' })).toBeInTheDocument();
     expect(api.lastCall('GET', '/api/v1/alarms')?.query.getAll('severity')).toEqual(['critical']);
-    expect(api.lastCall('POST', '/api/v1/auth/login')?.body).toEqual({ username: 'operator', password: 'secret' });
+    expect(api.lastCall('POST', '/api/v1/auth/login')?.body).toEqual({
+      username: 'operator',
+      password: 'secret',
+    });
   });
 
   it('sends a signed-in user away from /login', async () => {
@@ -59,7 +62,10 @@ describe('login form', () => {
   });
 
   it('shows an error for invalid credentials and stays on the page', async () => {
-    installApi({ 'POST /api/v1/auth/login': () => apiError(401, 'invalid_credentials', 'Invalid username or password') });
+    installApi({
+      'POST /api/v1/auth/login': () =>
+        apiError(401, 'invalid_credentials', 'Invalid username or password'),
+    });
     const user = userEvent.setup();
     renderApp({ route: '/login', role: null });
     await signInAs(user, 'operator', 'wrong');
@@ -110,7 +116,9 @@ describe('login form', () => {
   });
 
   it('maps errors to messages', () => {
-    expect(loginErrorMessage(new ApiError({ status: 500, code: 'internal_error', message: 'x' }))).toMatch(/not available/);
+    expect(
+      loginErrorMessage(new ApiError({ status: 500, code: 'internal_error', message: 'x' })),
+    ).toMatch(/not available/);
     expect(loginErrorMessage(new Error('x'))).toMatch(/failed/);
   });
 });
@@ -127,7 +135,9 @@ describe('session handling', () => {
   });
 
   it('a 401 from any API call signs out and returns to the login page with a notice', async () => {
-    installApi({ 'GET /api/v1/fleet/summary': () => apiError(401, 'unauthorized', 'Invalid or expired token') });
+    installApi({
+      'GET /api/v1/fleet/summary': () => apiError(401, 'unauthorized', 'Invalid or expired token'),
+    });
     renderApp({ route: '/' });
     expect(await screen.findByLabelText('Username')).toBeInTheDocument();
     expect(screen.getByText(/session has expired/i)).toBeInTheDocument();

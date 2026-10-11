@@ -6,7 +6,9 @@ import { iso, makeAlarm, makeAlarmDetail, makeAlarmEvent } from '@/test/fixtures
 import { apiError, installApi } from '@/test/mockApi';
 import { renderApp } from '@/test/render';
 
-const list = (items: AlarmOut[], total = items.length) => () => ({ items, total, limit: 25, offset: 0 });
+const list =
+  (items: AlarmOut[], total = items.length) =>
+  () => ({ items, total, limit: 25, offset: 0 });
 const main = () => screen.getByRole('main');
 
 const unack = makeAlarm({ id: 7 });
@@ -50,7 +52,10 @@ describe('Alarm center rendering', () => {
     expect(within(r9).getByText('Cleared - unacknowledged')).toBeInTheDocument();
     expect(within(r9).getByRole('button', { name: 'Acknowledge alarm 9' })).toBeInTheDocument();
     expect(within(r9).getByText('3')).toBeInTheDocument();
-    expect(within(r7).getByRole('link', { name: 'Details of alarm 7' })).toHaveAttribute('href', '/alarms/7');
+    expect(within(r7).getByRole('link', { name: 'Details of alarm 7' })).toHaveAttribute(
+      'href',
+      '/alarms/7',
+    );
   });
 
   it('shows an empty state and an error state', async () => {
@@ -60,7 +65,9 @@ describe('Alarm center rendering', () => {
     expect(within(main()).getByText('Nothing needs attention right now.')).toBeInTheDocument();
     first.unmount();
 
-    installApi({ 'GET /api/v1/alarms': () => apiError(500, 'internal_error', 'An internal error occurred') });
+    installApi({
+      'GET /api/v1/alarms': () => apiError(500, 'internal_error', 'An internal error occurred'),
+    });
     renderApp({ route: '/alarms' });
     expect(await within(main()).findByText('Could not load alarms')).toBeInTheDocument();
   });
@@ -89,7 +96,10 @@ describe('Alarm center filters change the API query and the URL', () => {
     await user.click(within(main()).getByRole('button', { name: 'Critical' }));
     await user.click(within(main()).getByRole('button', { name: 'Warning' }));
     await waitFor(() => {
-      expect(api.lastCall('GET', '/api/v1/alarms')?.query.getAll('severity')).toEqual(['critical', 'warning']);
+      expect(api.lastCall('GET', '/api/v1/alarms')?.query.getAll('severity')).toEqual([
+        'critical',
+        'warning',
+      ]);
     });
 
     await user.selectOptions(within(main()).getByLabelText('Vessel'), 'VES-002');
@@ -102,7 +112,9 @@ describe('Alarm center filters change the API query and the URL', () => {
     });
     await user.selectOptions(equipment, 'ME1');
     await user.selectOptions(within(main()).getByLabelText('Kind'), 'data_quality');
-    fireEvent.change(within(main()).getByLabelText('Raised from (UTC)'), { target: { value: '2026-03-01T10:00:00' } });
+    fireEvent.change(within(main()).getByLabelText('Raised from (UTC)'), {
+      target: { value: '2026-03-01T10:00:00' },
+    });
     await waitFor(() => {
       const q = api.lastCall('GET', '/api/v1/alarms')!.query;
       expect(q.get('equipment')).toBe('ME1');
@@ -121,7 +133,10 @@ describe('Alarm center filters change the API query and the URL', () => {
     expect(q.get('open')).toBe('false');
     expect(q.getAll('severity')).toEqual(['critical']);
     expect(q.get('vessel')).toBe('VES-001');
-    expect(within(main()).getByRole('button', { name: 'Critical' })).toHaveAttribute('aria-pressed', 'true');
+    expect(within(main()).getByRole('button', { name: 'Critical' })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    );
     await user.click(within(main()).getAllByRole('button', { name: 'Clear filters' })[0]!);
     await waitFor(() => {
       const next = api.lastCall('GET', '/api/v1/alarms')!.query;
@@ -161,8 +176,17 @@ describe('Acknowledgement flow', () => {
     const api = installApi({
       'GET /api/v1/alarms': () => ({ items: [state], total: 1, limit: 25, offset: 0 }),
       'POST /api/v1/alarms/7/acknowledge': ({ body }) => {
-        state = makeAlarm({ id: 7, state: 'active_acknowledged', acknowledged: true, acknowledged_by: 'operator', acknowledged_at: iso(5) });
-        return makeAlarmDetail({ ...state, events: [makeAlarmEvent({ note: (body as { note?: string }).note ?? null })] });
+        state = makeAlarm({
+          id: 7,
+          state: 'active_acknowledged',
+          acknowledged: true,
+          acknowledged_by: 'operator',
+          acknowledged_at: iso(5),
+        });
+        return makeAlarmDetail({
+          ...state,
+          events: [makeAlarmEvent({ note: (body as { note?: string }).note ?? null })],
+        });
       },
     });
     const user = userEvent.setup();
@@ -172,10 +196,14 @@ describe('Acknowledgement flow', () => {
     await user.type(within(dialog).getByLabelText(/Note/), 'Checked on site');
     await user.click(within(dialog).getByRole('button', { name: 'Acknowledge' }));
     expect(await screen.findByText('Alarm #7 acknowledged')).toBeInTheDocument();
-    expect(api.lastCall('POST', '/api/v1/alarms/7/acknowledge')?.body).toEqual({ note: 'Checked on site' });
+    expect(api.lastCall('POST', '/api/v1/alarms/7/acknowledge')?.body).toEqual({
+      note: 'Checked on site',
+    });
     expect(screen.queryByRole('dialog')).toBeNull();
     // the list is refetched and shows the acknowledged state
-    expect(await within(within(main()).getByRole('table')).findByText('Active - acknowledged')).toBeInTheDocument();
+    expect(
+      await within(within(main()).getByRole('table')).findByText('Active - acknowledged'),
+    ).toBeInTheDocument();
     expect(within(main()).queryByRole('button', { name: 'Acknowledge alarm 7' })).toBeNull();
   });
 
@@ -213,12 +241,15 @@ describe('Acknowledgement flow', () => {
   it('handles 409 already-acknowledged sensibly: info toast, dialog closes, list refreshes', async () => {
     const api = installApi({
       'GET /api/v1/alarms': () => ({ items: [unack], total: 1, limit: 25, offset: 0 }),
-      'POST /api/v1/alarms/7/acknowledge': () => apiError(409, 'alarm_already_acknowledged', 'Alarm is already acknowledged'),
+      'POST /api/v1/alarms/7/acknowledge': () =>
+        apiError(409, 'alarm_already_acknowledged', 'Alarm is already acknowledged'),
     });
     const user = userEvent.setup();
     renderApp({ route: '/alarms' });
     await user.click(await within(main()).findByRole('button', { name: 'Acknowledge alarm 7' }));
-    await user.click(within(await screen.findByRole('dialog')).getByRole('button', { name: 'Acknowledge' }));
+    await user.click(
+      within(await screen.findByRole('dialog')).getByRole('button', { name: 'Acknowledge' }),
+    );
     expect(await screen.findByText('Already acknowledged')).toBeInTheDocument();
     expect(screen.queryByRole('dialog')).toBeNull();
     const before = api.callsTo('GET', '/api/v1/alarms').length;
@@ -230,7 +261,8 @@ describe('Acknowledgement flow', () => {
   it('keeps the dialog open and shows an error for unexpected failures so the operator can retry', async () => {
     installApi({
       'GET /api/v1/alarms': () => ({ items: [unack], total: 1, limit: 25, offset: 0 }),
-      'POST /api/v1/alarms/7/acknowledge': () => apiError(500, 'internal_error', 'An internal error occurred'),
+      'POST /api/v1/alarms/7/acknowledge': () =>
+        apiError(500, 'internal_error', 'An internal error occurred'),
     });
     const user = userEvent.setup();
     renderApp({ route: '/alarms' });
@@ -252,18 +284,25 @@ describe('Acknowledgement flow', () => {
     expect(screen.queryByRole('dialog')).toBeNull();
     expect(api.callsTo('POST', '/api/v1/alarms/7/acknowledge')).toHaveLength(0);
     await user.hover(button);
-    expect(await screen.findByRole('tooltip', { hidden: false })).toHaveTextContent('Operator role required');
+    expect(await screen.findByRole('tooltip', { hidden: false })).toHaveTextContent(
+      'Operator role required',
+    );
   });
 
   it('handles a 403 from the backend gracefully', async () => {
     installApi({
       'GET /api/v1/alarms': list([unack]),
-      'POST /api/v1/alarms/7/acknowledge': () => apiError(403, 'forbidden', 'This action requires the operator role'),
+      'POST /api/v1/alarms/7/acknowledge': () =>
+        apiError(403, 'forbidden', 'This action requires the operator role'),
     });
     const user = userEvent.setup();
     renderApp({ route: '/alarms' });
     await user.click(await within(main()).findByRole('button', { name: 'Acknowledge alarm 7' }));
-    await user.click(within(await screen.findByRole('dialog')).getByRole('button', { name: 'Acknowledge' }));
-    expect(await screen.findByText('Operator role required', { selector: '.st-toast__title' })).toBeInTheDocument();
+    await user.click(
+      within(await screen.findByRole('dialog')).getByRole('button', { name: 'Acknowledge' }),
+    );
+    expect(
+      await screen.findByText('Operator role required', { selector: '.st-toast__title' }),
+    ).toBeInTheDocument();
   });
 });

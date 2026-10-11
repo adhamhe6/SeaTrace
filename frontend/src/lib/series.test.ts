@@ -15,9 +15,18 @@ describe('detectGaps', () => {
 
 describe('breakAtGaps', () => {
   it('inserts a null point inside each gap and keeps all real points', () => {
-    const points: ChartPoint[] = [[0, 1], [1000, 2], [9000, 3]];
+    const points: ChartPoint[] = [
+      [0, 1],
+      [1000, 2],
+      [9000, 3],
+    ];
     const out = breakAtGaps(points, [{ from: 1000, to: 9000 }]);
-    expect(out).toEqual([[0, 1], [1000, 2], [5000, null], [9000, 3]]);
+    expect(out).toEqual([
+      [0, 1],
+      [1000, 2],
+      [5000, null],
+      [9000, 3],
+    ]);
   });
   it('returns a copy when there are no gaps', () => {
     const points: ChartPoint[] = [[0, 1]];

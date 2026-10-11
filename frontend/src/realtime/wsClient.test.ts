@@ -35,7 +35,12 @@ class FakeWs implements WebSocketLike {
   }
 }
 
-const hello = { type: 'hello', protocol: 1, auth_timeout_s: 5, server_time: '2026-03-01T10:00:00Z' };
+const hello = {
+  type: 'hello',
+  protocol: 1,
+  auth_timeout_s: 5,
+  server_time: '2026-03-01T10:00:00Z',
+};
 const ready = (seq: number, resync = false) => ({
   type: 'ready',
   seq,

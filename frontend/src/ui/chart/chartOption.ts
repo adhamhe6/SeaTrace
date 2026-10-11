@@ -98,7 +98,11 @@ export function computeYExtent(
 }
 
 /** Rounds an extent outwards to "nice" tick boundaries; returns the tick interval too. */
-export function niceExtent(min: number, max: number, ticks = 3): { min: number; max: number; interval: number } {
+export function niceExtent(
+  min: number,
+  max: number,
+  ticks = 3,
+): { min: number; max: number; interval: number } {
   const span = max - min;
   const rough = span / ticks;
   const pow = 10 ** Math.floor(Math.log10(rough));

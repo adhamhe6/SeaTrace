@@ -12,7 +12,14 @@ const main = () => screen.getByRole('main');
 describe('Alarm detail', () => {
   it('lists the transition history in chronological order with actor, note and timestamps', async () => {
     const events = [
-      makeAlarmEvent({ id: 3, event_type: 'cleared', from_state: 'active_acknowledged', to_state: 'cleared', ts: iso(120), actor: 'system' }),
+      makeAlarmEvent({
+        id: 3,
+        event_type: 'cleared',
+        from_state: 'active_acknowledged',
+        to_state: 'cleared',
+        ts: iso(120),
+        actor: 'system',
+      }),
       makeAlarmEvent({ id: 1, event_type: 'raised', ts: iso(0) }),
       makeAlarmEvent({
         id: 2,
@@ -27,7 +34,15 @@ describe('Alarm detail', () => {
     ];
     installApi({
       'GET /api/v1/alarms/7': () =>
-        makeAlarmDetail({ state: 'cleared', condition_active: false, acknowledged: true, cleared_at: iso(120), acknowledged_by: 'operator', acknowledged_at: iso(60), events }),
+        makeAlarmDetail({
+          state: 'cleared',
+          condition_active: false,
+          acknowledged: true,
+          cleared_at: iso(120),
+          acknowledged_by: 'operator',
+          acknowledged_at: iso(60),
+          events,
+        }),
     });
     renderApp({ route: '/alarms/7' });
     const history = await screen.findByRole('list', { name: 'Alarm history, oldest first' });
@@ -44,7 +59,11 @@ describe('Alarm detail', () => {
   });
 
   it('sortEvents orders by time, then id, without mutating the input', () => {
-    const input = [makeAlarmEvent({ id: 5, ts: iso(10) }), makeAlarmEvent({ id: 4, ts: iso(10) }), makeAlarmEvent({ id: 6, ts: iso(1) })];
+    const input = [
+      makeAlarmEvent({ id: 5, ts: iso(10) }),
+      makeAlarmEvent({ id: 4, ts: iso(10) }),
+      makeAlarmEvent({ id: 6, ts: iso(1) }),
+    ];
     expect(sortEvents(input).map((e) => e.id)).toEqual([6, 4, 5]);
     expect(input.map((e) => e.id)).toEqual([5, 4, 6]);
   });
@@ -55,8 +74,13 @@ describe('Alarm detail', () => {
     await screen.findByRole('heading', { name: /Engine temperature above limit/ });
     expect(within(main()).getByText('ME_TEMP_HIGH')).toBeInTheDocument();
     expect(within(main()).getByText('temperature > 95 °C')).toBeInTheDocument();
-    expect(within(main()).getByText('Trigger value').nextElementSibling).toHaveTextContent('96.1 °C at 2026-03-01 10:00:00.000');
-    expect(within(main()).getByRole('link', { name: 'Replay incident' })).toHaveAttribute('href', '/replay?alarm=7');
+    expect(within(main()).getByText('Trigger value').nextElementSibling).toHaveTextContent(
+      '96.1 °C at 2026-03-01 10:00:00.000',
+    );
+    expect(within(main()).getByRole('link', { name: 'Replay incident' })).toHaveAttribute(
+      'href',
+      '/replay?alarm=7',
+    );
   });
 
   it.each<[AlarmState, RegExp]>([
@@ -67,7 +91,11 @@ describe('Alarm detail', () => {
   ])('explains the lifecycle state %s in plain text', async (state, text) => {
     installApi({
       'GET /api/v1/alarms/7': () =>
-        makeAlarmDetail({ state, condition_active: state.startsWith('active'), acknowledged: state === 'cleared' || state === 'active_acknowledged' }),
+        makeAlarmDetail({
+          state,
+          condition_active: state.startsWith('active'),
+          acknowledged: state === 'cleared' || state === 'active_acknowledged',
+        }),
     });
     renderApp({ route: '/alarms/7' });
     expect(await screen.findByTestId('state-explanation')).toHaveTextContent(text);
@@ -85,7 +113,14 @@ describe('Alarm detail', () => {
           acknowledged_at: iso(30),
           events: [
             makeAlarmEvent(),
-            makeAlarmEvent({ id: 2, event_type: 'acknowledged', from_state: 'active_unacknowledged', to_state: 'active_acknowledged', actor: 'operator', ts: iso(30) }),
+            makeAlarmEvent({
+              id: 2,
+              event_type: 'acknowledged',
+              from_state: 'active_unacknowledged',
+              to_state: 'active_acknowledged',
+              actor: 'operator',
+              ts: iso(30),
+            }),
           ],
         });
         return detail;
@@ -94,14 +129,20 @@ describe('Alarm detail', () => {
     const user = userEvent.setup();
     renderApp({ route: '/alarms/7' });
     await user.click(await screen.findByRole('button', { name: 'Acknowledge alarm 7' }));
-    await user.click(within(await screen.findByRole('dialog')).getByRole('button', { name: 'Acknowledge' }));
-    expect(await screen.findByTestId('state-explanation')).toHaveTextContent(/Active - acknowledged/);
+    await user.click(
+      within(await screen.findByRole('dialog')).getByRole('button', { name: 'Acknowledge' }),
+    );
+    expect(await screen.findByTestId('state-explanation')).toHaveTextContent(
+      /Active - acknowledged/,
+    );
     const history = screen.getByRole('list', { name: 'Alarm history, oldest first' });
     expect(within(history).getAllByRole('listitem')).toHaveLength(2);
   });
 
   it('shows not-found and invalid-id states', async () => {
-    installApi({ 'GET /api/v1/alarms/99': () => apiError(404, 'not_found', "Alarm '99' was not found") });
+    installApi({
+      'GET /api/v1/alarms/99': () => apiError(404, 'not_found', "Alarm '99' was not found"),
+    });
     const first = renderApp({ route: '/alarms/99' });
     expect(await screen.findByText('Alarm #99 was not found')).toBeInTheDocument();
     first.unmount();

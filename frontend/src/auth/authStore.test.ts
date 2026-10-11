@@ -18,13 +18,20 @@ describe('authStore session persistence (sessionStorage)', () => {
       JSON.stringify({ token: token.access_token, user: token.user, expiresAt: token.expires_at }),
     );
     const { useAuth } = await loadStore();
-    expect(useAuth.getState()).toMatchObject({ token: 'token-operator', user: { role: 'operator' } });
+    expect(useAuth.getState()).toMatchObject({
+      token: 'token-operator',
+      user: { role: 'operator' },
+    });
   });
 
   it('drops expired or corrupt sessions', async () => {
     window.sessionStorage.setItem(
       'seatrace.auth',
-      JSON.stringify({ token: 't', user: { id: 1, username: 'x', role: 'viewer' }, expiresAt: '2000-01-01T00:00:00Z' }),
+      JSON.stringify({
+        token: 't',
+        user: { id: 1, username: 'x', role: 'viewer' },
+        expiresAt: '2000-01-01T00:00:00Z',
+      }),
     );
     expect((await loadStore()).useAuth.getState().token).toBeNull();
     expect(window.sessionStorage.getItem('seatrace.auth')).toBeNull();

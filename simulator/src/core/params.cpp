@@ -68,7 +68,8 @@ constexpr std::array<ParamDef, 6> kBilgeTuning{{
     {"max_level_cm", 120.0, 10.0, 1000.0},
 }};
 
-// cppcheck-suppress returnDanglingLifetime  (false positive: the span views static arrays)
+// False positive: the span views static arrays, so the returned pointer stays valid.
+// cppcheck-suppress returnDanglingLifetime
 const ParamDef* find_def(std::span<const ParamDef> defs, std::string_view key) {
   for (const ParamDef& def : defs) {
     if (def.key == key) return &def;

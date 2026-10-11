@@ -610,28 +610,44 @@ async def test_anomaly_not_applicable_when_engine_stopped(client, op, container)
 
 # ------------------------------------------------------------------ database outage
 async def test_database_outage_gives_503_not_ready_and_recovers(client, op, container: Container):
+    from app.db.base import make_sessionmaker
     from sqlalchemy.ext.asyncio import create_async_engine
 
-    from app.db.base import make_sessionmaker
-
     real_engine, real_maker = container.engine, container.sessionmaker
-    dead = create_async_engine("postgresql+asyncpg://nobody:x@127.0.0.1:1/none",
-                               connect_args={"timeout": 1})
+    dead = create_async_engine(
+        "postgresql+asyncpg://nobody:x@127.0.0.1:1/none", connect_args={"timeout": 1}
+    )
     container.engine = dead
-    for svc in (container.alarms, container.telemetry, container.incidents, container.fleet, container.simulator):
+    for svc in (
+        container.alarms,
+        container.telemetry,
+        container.incidents,
+        container.fleet,
+        container.simulator,
+    ):
         svc._sessionmaker = make_sessionmaker(dead)
     try:
         ready = await client.get(f"{API}/health/ready")
         assert ready.status_code == 503 and ready.json()["checks"]["database"] == "unavailable"
-        assert (await client.get(f"{API}/health/live")).status_code == 200  # liveness is independent of the DB
+        assert (
+            await client.get(f"{API}/health/live")
+        ).status_code == 200  # liveness is independent of the DB
         r = await client.get(f"{API}/alarms", headers=op)
         assert r.status_code == 503 and r.json()["error"]["code"] == "database_unavailable"
-        assert (await client.get(f"{API}/system/status", headers=op)).json()["database"] == "unavailable"
+        assert (await client.get(f"{API}/system/status", headers=op)).json()[
+            "database"
+        ] == "unavailable"
         # cached live data still answers (latest readings come from memory, not the DB)
         assert (await client.get(f"{API}/telemetry/latest", headers=op)).status_code == 200
     finally:
         container.engine = real_engine
-        for svc in (container.alarms, container.telemetry, container.incidents, container.fleet, container.simulator):
+        for svc in (
+            container.alarms,
+            container.telemetry,
+            container.incidents,
+            container.fleet,
+            container.simulator,
+        ):
             svc._sessionmaker = real_maker
         await dead.dispose()
     assert (await client.get(f"{API}/health/ready")).status_code == 200

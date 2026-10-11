@@ -20,7 +20,10 @@ export interface RecordedCall {
 }
 
 export function json(body: unknown, status = 200): Response {
-  return new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json' } });
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { 'Content-Type': 'application/json' },
+  });
 }
 
 export function apiError(status: number, code: string, message: string): Response {
@@ -39,7 +42,8 @@ export function defaultRoutes(): Routes {
       makeVesselSummary({ id: 2, code: 'VES-002', name: 'MV Baltic Meridian' }),
     ],
     'GET /api/v1/vessels/VES-001': () => makeVessel(),
-    'GET /api/v1/vessels/VES-002': () => makeVessel({ code: 'VES-002', name: 'MV Baltic Meridian' }),
+    'GET /api/v1/vessels/VES-002': () =>
+      makeVessel({ code: 'VES-002', name: 'MV Baltic Meridian' }),
     'GET /api/v1/events/recent': () => [],
     'GET /api/v1/alarms': () => ({ items: [makeAlarm()], total: 1, limit: 25, offset: 0 }),
     'GET /api/v1/simulator/status': () => makeSimStatus(),
@@ -59,10 +63,19 @@ export function installApi(overrides: Routes = {}): MockApi {
   const routes = { ...defaultRoutes(), ...overrides };
   const calls: RecordedCall[] = [];
   const fetchMock = vi.fn((input: RequestInfo | URL, init?: RequestInit) => {
-    const url = new URL(typeof input === 'string' ? input : input instanceof URL ? input.href : input.url, 'http://localhost');
+    const url = new URL(
+      typeof input === 'string' ? input : input instanceof URL ? input.href : input.url,
+      'http://localhost',
+    );
     const method = (init?.method ?? 'GET').toUpperCase();
     const body: unknown = typeof init?.body === 'string' ? JSON.parse(init.body) : undefined;
-    calls.push({ method, path: url.pathname, query: url.searchParams, body, headers: new Headers(init?.headers) });
+    calls.push({
+      method,
+      path: url.pathname,
+      query: url.searchParams,
+      body,
+      headers: new Headers(init?.headers),
+    });
     const handler = routes[`${method} ${url.pathname}`];
     if (!handler) {
       return Promise.resolve(apiError(404, 'not_found', `No mock for ${method} ${url.pathname}`));

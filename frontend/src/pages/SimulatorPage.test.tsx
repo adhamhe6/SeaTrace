@@ -7,11 +7,21 @@ import { apiError, installApi } from '@/test/mockApi';
 import { renderApp } from '@/test/render';
 
 const main = () => screen.getByRole('main');
-const ok = (message: string): ScenarioResult => ({ accepted: true, message, simulator: makeSimStatus() });
+const ok = (message: string): ScenarioResult => ({
+  accepted: true,
+  message,
+  simulator: makeSimStatus(),
+});
 
 const scenarios = [
   makeScenario(),
-  makeScenario({ id: 'sensor_stuck', name: 'Stuck sensor', category: 'sensor', target: 'ME1 temperature sensor', expected_alarms: ['SENSOR_QUALITY'] }),
+  makeScenario({
+    id: 'sensor_stuck',
+    name: 'Stuck sensor',
+    category: 'sensor',
+    target: 'ME1 temperature sensor',
+    expected_alarms: ['SENSOR_QUALITY'],
+  }),
   makeScenario({
     id: 'opcua_outage',
     name: 'OPC UA server outage',
@@ -35,9 +45,13 @@ describe('Simulator controls', () => {
     installApi(base);
     renderApp({ route: '/simulator' });
     expect(await within(main()).findByText(/^SIMULATION/)).toBeInTheDocument();
-    expect(await within(main()).findByRole('heading', { name: 'Equipment faults' })).toBeInTheDocument();
+    expect(
+      await within(main()).findByRole('heading', { name: 'Equipment faults' }),
+    ).toBeInTheDocument();
     expect(within(main()).getByRole('heading', { name: 'Sensor faults' })).toBeInTheDocument();
-    expect(within(main()).getByRole('heading', { name: 'Communication faults' })).toBeInTheDocument();
+    expect(
+      within(main()).getByRole('heading', { name: 'Communication faults' }),
+    ).toBeInTheDocument();
     const c = await card('Engine overheating');
     expect(c.getByText('Main engine ME1', { exact: false })).toBeInTheDocument();
     expect(c.getByText('ME_TEMP_HIGH')).toBeInTheDocument();
@@ -51,12 +65,22 @@ describe('Simulator controls', () => {
     installApi({
       ...base,
       'GET /api/v1/system/status': () =>
-        makeSystemStatus({ opcua: makeOpcUa({ state: 'backoff', reconnect_attempts: 4, last_error: 'timeout', security: 'none' }) }),
-      'GET /api/v1/simulator/status': () => makeSimStatus({ connected: false, heartbeat_age_s: 12.5 }),
+        makeSystemStatus({
+          opcua: makeOpcUa({
+            state: 'backoff',
+            reconnect_attempts: 4,
+            last_error: 'timeout',
+            security: 'none',
+          }),
+        }),
+      'GET /api/v1/simulator/status': () =>
+        makeSimStatus({ connected: false, heartbeat_age_s: 12.5 }),
     });
     renderApp({ route: '/simulator' });
     await within(main()).findByText('backoff');
-    const panel = within(main()).getByRole('heading', { name: 'OPC UA connection' }).closest('section')!;
+    const panel = within(main())
+      .getByRole('heading', { name: 'OPC UA connection' })
+      .closest('section')!;
     expect(within(panel).getByText('opc.tcp://sim:4840/seatrace/simulator')).toBeInTheDocument();
     expect(within(panel).getByText('None')).toBeInTheDocument(); // security mode
     expect(within(panel).getByText('4')).toBeInTheDocument(); // reconnect attempts
@@ -69,7 +93,8 @@ describe('Simulator controls', () => {
   it('activates a scenario for the chosen vessel with an optional duration and reports success inline and as a toast', async () => {
     const api = installApi({
       ...base,
-      'POST /api/v1/simulator/scenarios/engine_overheat/activate': () => ok("scenario 'engine_overheat' activated on vessel 'VES-002'"),
+      'POST /api/v1/simulator/scenarios/engine_overheat/activate': () =>
+        ok("scenario 'engine_overheat' activated on vessel 'VES-002'"),
     });
     const user = userEvent.setup();
     renderApp({ route: '/simulator' });
@@ -81,15 +106,24 @@ describe('Simulator controls', () => {
     await user.type(c.getByLabelText(/Duration/), '120');
     await user.click(c.getByRole('button', { name: 'Activate Engine overheating' }));
     expect(await c.findByText(/activated on vessel 'VES-002'/)).toBeInTheDocument();
-    expect(api.lastCall('POST', '/api/v1/simulator/scenarios/engine_overheat/activate')?.body).toEqual({
+    expect(
+      api.lastCall('POST', '/api/v1/simulator/scenarios/engine_overheat/activate')?.body,
+    ).toEqual({
       vessel_code: 'VES-002',
       duration_s: 120,
     });
-    expect(await screen.findByText('Engine overheating activated on VES-002', { selector: '.st-toast__title' })).toBeInTheDocument();
+    expect(
+      await screen.findByText('Engine overheating activated on VES-002', {
+        selector: '.st-toast__title',
+      }),
+    ).toBeInTheDocument();
   });
 
   it('omits the duration when left empty and defaults to the first vessel', async () => {
-    const api = installApi({ ...base, 'POST /api/v1/simulator/scenarios/sensor_stuck/activate': () => ok('ok') });
+    const api = installApi({
+      ...base,
+      'POST /api/v1/simulator/scenarios/sensor_stuck/activate': () => ok('ok'),
+    });
     const user = userEvent.setup();
     renderApp({ route: '/simulator' });
     const c = await card('Stuck sensor');
@@ -98,12 +132,17 @@ describe('Simulator controls', () => {
     });
     await user.click(c.getByRole('button', { name: 'Activate Stuck sensor' }));
     await waitFor(() => {
-      expect(api.lastCall('POST', '/api/v1/simulator/scenarios/sensor_stuck/activate')?.body).toEqual({ vessel_code: 'VES-001', duration_s: null });
+      expect(
+        api.lastCall('POST', '/api/v1/simulator/scenarios/sensor_stuck/activate')?.body,
+      ).toEqual({ vessel_code: 'VES-001', duration_s: null });
     });
   });
 
   it('clears a scenario', async () => {
-    const api = installApi({ ...base, 'POST /api/v1/simulator/scenarios/engine_overheat/clear': () => ok('cleared') });
+    const api = installApi({
+      ...base,
+      'POST /api/v1/simulator/scenarios/engine_overheat/clear': () => ok('cleared'),
+    });
     const user = userEvent.setup();
     renderApp({ route: '/simulator' });
     const c = await card('Engine overheating');
@@ -112,35 +151,59 @@ describe('Simulator controls', () => {
     });
     await user.click(c.getByRole('button', { name: 'Clear Engine overheating' }));
     expect(await c.findByText(/Scenario cleared on VES-001/)).toBeInTheDocument();
-    expect(api.lastCall('POST', '/api/v1/simulator/scenarios/engine_overheat/clear')?.body).toEqual({ vessel_code: 'VES-001' });
+    expect(api.lastCall('POST', '/api/v1/simulator/scenarios/engine_overheat/clear')?.body).toEqual(
+      { vessel_code: 'VES-001' },
+    );
   });
 
   it('sends no vessel for server-scope scenarios', async () => {
-    const api = installApi({ ...base, 'POST /api/v1/simulator/scenarios/opcua_outage/activate': () => ok('ok') });
+    const api = installApi({
+      ...base,
+      'POST /api/v1/simulator/scenarios/opcua_outage/activate': () => ok('ok'),
+    });
     const user = userEvent.setup();
     renderApp({ route: '/simulator' });
     const c = await card('OPC UA server outage');
     await user.click(c.getByRole('button', { name: 'Activate OPC UA server outage' }));
     await waitFor(() => {
-      expect(api.lastCall('POST', '/api/v1/simulator/scenarios/opcua_outage/activate')?.body).toEqual({ vessel_code: null, duration_s: null });
+      expect(
+        api.lastCall('POST', '/api/v1/simulator/scenarios/opcua_outage/activate')?.body,
+      ).toEqual({ vessel_code: null, duration_s: null });
     });
   });
 
   it.each([
     [503, 'simulator_unavailable', 'x', /cannot reach the simulator over OPC UA/],
-    [409, 'scenario_rejected', "scenario 'engine_overheat' is already active", /Command rejected by the simulator\.\s+scenario 'engine_overheat' is already active/],
-    [422, 'invalid_duration', 'duration_s must be <= 3600', /Invalid duration\.\s+duration_s must be <= 3600/],
-  ])('maps backend error %s %s to a clear inline message', async (status, code, message, expected) => {
-    installApi({ ...base, 'POST /api/v1/simulator/scenarios/engine_overheat/activate': () => apiError(status, code, message) });
-    const user = userEvent.setup();
-    renderApp({ route: '/simulator' });
-    const c = await card('Engine overheating');
-    await waitFor(() => {
-      expect(c.getByRole('option', { name: /VES-001/ })).toBeInTheDocument();
-    });
-    await user.click(c.getByRole('button', { name: 'Activate Engine overheating' }));
-    expect(await c.findByRole('alert')).toHaveTextContent(expected);
-  });
+    [
+      409,
+      'scenario_rejected',
+      "scenario 'engine_overheat' is already active",
+      /Command rejected by the simulator\.\s+scenario 'engine_overheat' is already active/,
+    ],
+    [
+      422,
+      'invalid_duration',
+      'duration_s must be <= 3600',
+      /Invalid duration\.\s+duration_s must be <= 3600/,
+    ],
+  ])(
+    'maps backend error %s %s to a clear inline message',
+    async (status, code, message, expected) => {
+      installApi({
+        ...base,
+        'POST /api/v1/simulator/scenarios/engine_overheat/activate': () =>
+          apiError(status, code, message),
+      });
+      const user = userEvent.setup();
+      renderApp({ route: '/simulator' });
+      const c = await card('Engine overheating');
+      await waitFor(() => {
+        expect(c.getByRole('option', { name: /VES-001/ })).toBeInTheDocument();
+      });
+      await user.click(c.getByRole('button', { name: 'Activate Engine overheating' }));
+      expect(await c.findByRole('alert')).toHaveTextContent(expected);
+    },
+  );
 
   it('validates the duration client-side against the scenario maximum', async () => {
     const api = installApi(base);
@@ -150,7 +213,9 @@ describe('Simulator controls', () => {
     await user.type(c.getByLabelText(/Duration/), '999');
     expect(c.getByText(/At most 120 s/)).toBeInTheDocument();
     expect(c.getByRole('button', { name: 'Activate OPC UA server outage' })).toBeDisabled();
-    expect(api.callsTo('POST', '/api/v1/simulator/scenarios/opcua_outage/activate')).toHaveLength(0);
+    expect(api.callsTo('POST', '/api/v1/simulator/scenarios/opcua_outage/activate')).toHaveLength(
+      0,
+    );
   });
 
   it('disables the buttons while a command is pending (no double submit)', async () => {
@@ -177,7 +242,9 @@ describe('Simulator controls', () => {
     });
     expect(c.getByRole('button', { name: 'Clear Engine overheating' })).toBeDisabled();
     await user.click(activate);
-    expect(api.callsTo('POST', '/api/v1/simulator/scenarios/engine_overheat/activate')).toHaveLength(1);
+    expect(
+      api.callsTo('POST', '/api/v1/simulator/scenarios/engine_overheat/activate'),
+    ).toHaveLength(1);
     release();
     await c.findByText(/Scenario activated/);
     expect(activate).toBeEnabled();
@@ -187,21 +254,37 @@ describe('Simulator controls', () => {
     const api = installApi({
       ...base,
       'GET /api/v1/simulator/status': () =>
-        makeSimStatus({ active_scenarios: [{ scenario_id: 'engine_overheat', vessel_code: 'VES-001', started_at: iso(0), ends_at: null }] }),
+        makeSimStatus({
+          active_scenarios: [
+            {
+              scenario_id: 'engine_overheat',
+              vessel_code: 'VES-001',
+              started_at: iso(0),
+              ends_at: null,
+            },
+          ],
+        }),
       'POST /api/v1/simulator/scenarios/engine_overheat/clear': () => ok('cleared'),
     });
     const user = userEvent.setup();
     renderApp({ route: '/simulator' });
     const list = await within(main()).findByRole('list', { name: 'Active scenarios' });
     expect(within(list).getByText('Engine overheating')).toBeInTheDocument();
-    await user.click(within(list).getByRole('button', { name: 'Clear Engine overheating on VES-001' }));
+    await user.click(
+      within(list).getByRole('button', { name: 'Clear Engine overheating on VES-001' }),
+    );
     await waitFor(() => {
-      expect(api.lastCall('POST', '/api/v1/simulator/scenarios/engine_overheat/clear')?.body).toEqual({ vessel_code: 'VES-001' });
+      expect(
+        api.lastCall('POST', '/api/v1/simulator/scenarios/engine_overheat/clear')?.body,
+      ).toEqual({ vessel_code: 'VES-001' });
     });
   });
 
   it('resets all scenarios only after confirmation', async () => {
-    const api = installApi({ ...base, 'POST /api/v1/simulator/reset': () => ok('all scenarios cleared') });
+    const api = installApi({
+      ...base,
+      'POST /api/v1/simulator/reset': () => ok('all scenarios cleared'),
+    });
     const user = userEvent.setup();
     renderApp({ route: '/simulator' });
     await user.click(await within(main()).findByRole('button', { name: 'Reset all scenarios' }));
@@ -212,8 +295,12 @@ describe('Simulator controls', () => {
     expect(api.callsTo('POST', '/api/v1/simulator/reset')).toHaveLength(0);
 
     await user.click(screen.getByRole('button', { name: 'Reset all scenarios' }));
-    await user.click(within(await screen.findByRole('dialog')).getByRole('button', { name: 'Reset all' }));
-    expect(await screen.findByText('All scenarios cleared', { selector: '.st-toast__title' })).toBeInTheDocument();
+    await user.click(
+      within(await screen.findByRole('dialog')).getByRole('button', { name: 'Reset all' }),
+    );
+    expect(
+      await screen.findByText('All scenarios cleared', { selector: '.st-toast__title' }),
+    ).toBeInTheDocument();
     expect(api.callsTo('POST', '/api/v1/simulator/reset')).toHaveLength(1);
     await waitFor(() => {
       expect(screen.queryByRole('dialog')).toBeNull();
@@ -221,7 +308,10 @@ describe('Simulator controls', () => {
   });
 
   it('keeps the reset dialog open and explains a failure', async () => {
-    installApi({ ...base, 'POST /api/v1/simulator/reset': () => apiError(503, 'simulator_unavailable', 'down') });
+    installApi({
+      ...base,
+      'POST /api/v1/simulator/reset': () => apiError(503, 'simulator_unavailable', 'down'),
+    });
     const user = userEvent.setup();
     renderApp({ route: '/simulator' });
     await user.click(await within(main()).findByRole('button', { name: 'Reset all scenarios' }));
@@ -234,8 +324,28 @@ describe('Simulator controls', () => {
     installApi({
       ...base,
       'GET /api/v1/simulator/events': () => [
-        { id: 2, at: iso(10), actor: 'operator', action: 'activate', scenario_id: 'engine_overheat', vessel_code: 'VES-001', params: null, result: 'accepted', message: 'activated' },
-        { id: 1, at: iso(0), actor: 'operator', action: 'clear', scenario_id: 'sensor_stuck', vessel_code: 'VES-001', params: null, result: 'failed', message: 'unreachable' },
+        {
+          id: 2,
+          at: iso(10),
+          actor: 'operator',
+          action: 'activate',
+          scenario_id: 'engine_overheat',
+          vessel_code: 'VES-001',
+          params: null,
+          result: 'accepted',
+          message: 'activated',
+        },
+        {
+          id: 1,
+          at: iso(0),
+          actor: 'operator',
+          action: 'clear',
+          scenario_id: 'sensor_stuck',
+          vessel_code: 'VES-001',
+          params: null,
+          result: 'failed',
+          message: 'unreachable',
+        },
       ],
     });
     renderApp({ route: '/simulator' });
@@ -266,7 +376,9 @@ describe('Simulator controls', () => {
       expect(api.calls.filter((call) => call.method === 'POST')).toHaveLength(0);
       const activate = c.getByRole('button', { name: 'Activate Engine overheating' });
       await user.hover(activate);
-      expect(await within(activate.closest('.st-tip') as HTMLElement).findByRole('tooltip')).toHaveTextContent('Operator role required');
+      expect(
+        await within(activate.closest('.st-tip') as HTMLElement).findByRole('tooltip'),
+      ).toHaveTextContent('Operator role required');
     });
   });
 });

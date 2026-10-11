@@ -8,7 +8,7 @@ namespace seatrace::sim {
 
 Equipment::Equipment(const EquipmentConfig& config, const std::string& vessel_id,
                      std::uint64_t seed)
-    : config_(config), vessel_id_(std::move(vessel_id)), state_(config.initial_state) {
+    : config_(config), vessel_id_(vessel_id), state_(config.initial_state) {
   for (const MeasurementSpec& spec : config_.measurements) {
     const std::string label = vessel_id_ + "." + config_.code + "." + spec.name;
     sensors_.emplace_back(spec, Rng(derive_seed(seed, label)));

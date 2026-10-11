@@ -12,7 +12,10 @@ function findChromium(): string | undefined {
     .filter((name) => name.startsWith('chromium-'))
     .sort()
     .reverse()
-    .flatMap((name) => [join(root, name, 'chrome-linux', 'chrome'), join(root, name, 'chrome-linux64', 'chrome')]);
+    .flatMap((name) => [
+      join(root, name, 'chrome-linux', 'chrome'),
+      join(root, name, 'chrome-linux64', 'chrome'),
+    ]);
   return candidates.find((path) => existsSync(path));
 }
 

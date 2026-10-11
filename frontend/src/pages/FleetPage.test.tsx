@@ -17,7 +17,10 @@ describe('Fleet overview', () => {
     installApi({ 'GET /api/v1/fleet/summary': () => new Promise<never>(() => undefined) });
     renderApp({ route: '/' });
     expect(screen.getByRole('heading', { name: 'Fleet overview' })).toBeInTheDocument();
-    expect(within(main()).getByRole('table', { name: 'Vessel inventory' })).toHaveAttribute('aria-busy', 'true');
+    expect(within(main()).getByRole('table', { name: 'Vessel inventory' })).toHaveAttribute(
+      'aria-busy',
+      'true',
+    );
   });
 
   it('renders vessels, alarm counts, equipment condition and communication from the API', async () => {
@@ -28,7 +31,13 @@ describe('Fleet overview', () => {
           open_alarms: { info: 0, warning: 1, critical: 2, unacknowledged: 3 },
           equipment_count: 4,
         }),
-        makeVesselSummary({ id: 2, code: 'VES-002', name: 'MV Baltic Meridian', communication: 'offline', health: 'offline' }),
+        makeVesselSummary({
+          id: 2,
+          code: 'VES-002',
+          name: 'MV Baltic Meridian',
+          communication: 'offline',
+          health: 'offline',
+        }),
       ],
       'GET /api/v1/fleet/summary': () =>
         makeFleetSummary({
@@ -38,7 +47,11 @@ describe('Fleet overview', () => {
           open_alarms: { info: 1, warning: 2, critical: 3, unacknowledged: 4 },
         }),
       'GET /api/v1/events/recent': () => [
-        makeRecentEvent({ id: 'e1', message: 'Alarm raised: Engine temperature above limit', alarm_id: 7 }),
+        makeRecentEvent({
+          id: 'e1',
+          message: 'Alarm raised: Engine temperature above limit',
+          alarm_id: 7,
+        }),
       ],
     });
     renderApp({ route: '/' });
@@ -47,7 +60,10 @@ describe('Fleet overview', () => {
     const table = within(main()).getByRole('table', { name: 'Vessel inventory' });
     const rows = within(table).getAllByRole('row');
     expect(rows).toHaveLength(3); // header + 2 vessels
-    expect(within(rows[1]!).getByRole('link', { name: 'MV Aurora Tide' })).toHaveAttribute('href', '/vessels/VES-001');
+    expect(within(rows[1]!).getByRole('link', { name: 'MV Aurora Tide' })).toHaveAttribute(
+      'href',
+      '/vessels/VES-001',
+    );
     expect(within(rows[1]!).getByText('2 Critical')).toBeInTheDocument();
     expect(within(rows[1]!).getByText('3 unack.')).toBeInTheDocument();
     expect(within(rows[2]!).getAllByText('Offline')).toHaveLength(2); // health and communication, each with a text label
@@ -55,17 +71,24 @@ describe('Fleet overview', () => {
     // Fleet banner, with text as well as colour
     expect(await within(main()).findByText(/Fleet status: Critical/)).toBeInTheDocument();
     // Alarm card
-    const alarmCard = within(main()).getByRole('heading', { name: 'Open alarms' }).closest('section')!;
+    const alarmCard = within(main())
+      .getByRole('heading', { name: 'Open alarms' })
+      .closest('section')!;
     expect(within(alarmCard).getByText('6')).toBeInTheDocument(); // 1 + 2 + 3
     expect(within(alarmCard).getByText('4 unacknowledged')).toBeInTheDocument();
     expect(within(alarmCard).getByText('3 Critical')).toBeInTheDocument();
     // Equipment health & communication
-    const equipmentCard = within(main()).getByRole('heading', { name: 'Equipment condition' }).closest('section')!;
+    const equipmentCard = within(main())
+      .getByRole('heading', { name: 'Equipment condition' })
+      .closest('section')!;
     expect(within(equipmentCard).getByText('5 Normal')).toBeInTheDocument();
     expect(within(equipmentCard).getByText('1 Offline')).toBeInTheDocument();
     expect(within(main()).getByTestId('fleet-opcua')).toHaveTextContent('connected');
     // Events feed links to the alarm
-    expect(within(main()).getByRole('link', { name: 'Alarm #7' })).toHaveAttribute('href', '/alarms/7');
+    expect(within(main()).getByRole('link', { name: 'Alarm #7' })).toHaveAttribute(
+      'href',
+      '/alarms/7',
+    );
   });
 
   it('announces active scenarios', async () => {
@@ -73,7 +96,14 @@ describe('Fleet overview', () => {
       'GET /api/v1/fleet/summary': () => makeFleetSummary({ active_scenarios: 1 }),
       'GET /api/v1/simulator/status': () =>
         makeSimStatus({
-          active_scenarios: [{ scenario_id: 'engine_overheat', vessel_code: 'VES-001', started_at: iso(0), ends_at: null }],
+          active_scenarios: [
+            {
+              scenario_id: 'engine_overheat',
+              vessel_code: 'VES-001',
+              started_at: iso(0),
+              ends_at: null,
+            },
+          ],
         }),
     });
     renderApp({ route: '/' });
@@ -85,7 +115,8 @@ describe('Fleet overview', () => {
     installApi({
       'GET /api/v1/vessels': () => [],
       'GET /api/v1/events/recent': () => [],
-      'GET /api/v1/fleet/summary': () => makeFleetSummary({ vessels_total: 0, vessels_by_health: {} }),
+      'GET /api/v1/fleet/summary': () =>
+        makeFleetSummary({ vessels_total: 0, vessels_by_health: {} }),
     });
     renderApp({ route: '/' });
     expect(await within(main()).findByText('No vessels configured')).toBeInTheDocument();
@@ -96,7 +127,9 @@ describe('Fleet overview', () => {
     let fail = true;
     installApi({
       'GET /api/v1/fleet/summary': () =>
-        fail ? apiError(503, 'database_unavailable', 'The database is temporarily unavailable') : makeFleetSummary(),
+        fail
+          ? apiError(503, 'database_unavailable', 'The database is temporarily unavailable')
+          : makeFleetSummary(),
     });
     renderApp({ route: '/' });
     const alert = await within(main()).findByRole('alert');

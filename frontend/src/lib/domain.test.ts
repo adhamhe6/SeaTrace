@@ -5,11 +5,28 @@ import { rangePosition, rangeStatus, readingFreshness } from './readings';
 
 describe('alarm lifecycle descriptions', () => {
   it('describes the four states consistently with the backend semantics', () => {
-    expect(ALARM_STATE.active_unacknowledged).toMatchObject({ conditionActive: true, acknowledged: false, needsAcknowledgement: true });
-    expect(ALARM_STATE.active_acknowledged).toMatchObject({ conditionActive: true, acknowledged: true, needsAcknowledgement: false });
-    expect(ALARM_STATE.cleared_unacknowledged).toMatchObject({ conditionActive: false, acknowledged: false, needsAcknowledgement: true });
-    expect(ALARM_STATE.cleared).toMatchObject({ conditionActive: false, acknowledged: true, needsAcknowledgement: false });
-    for (const info of Object.values(ALARM_STATE)) expect(info.explanation.length).toBeGreaterThan(30);
+    expect(ALARM_STATE.active_unacknowledged).toMatchObject({
+      conditionActive: true,
+      acknowledged: false,
+      needsAcknowledgement: true,
+    });
+    expect(ALARM_STATE.active_acknowledged).toMatchObject({
+      conditionActive: true,
+      acknowledged: true,
+      needsAcknowledgement: false,
+    });
+    expect(ALARM_STATE.cleared_unacknowledged).toMatchObject({
+      conditionActive: false,
+      acknowledged: false,
+      needsAcknowledgement: true,
+    });
+    expect(ALARM_STATE.cleared).toMatchObject({
+      conditionActive: false,
+      acknowledged: true,
+      needsAcknowledgement: false,
+    });
+    for (const info of Object.values(ALARM_STATE))
+      expect(info.explanation.length).toBeGreaterThan(30);
   });
   it('labels events and comparisons', () => {
     expect(eventLabel('cleared')).toBe('Returned to normal');
@@ -41,12 +58,27 @@ describe('readingFreshness', () => {
     expect(r).toMatchObject({ stale: true, quality: 'stale' });
   });
   it('respects the server stale flag and missing samples', () => {
-    expect(readingFreshness(makeReading({ ingested_ts: at(29), stale: true }), now, null).quality).toBe('stale');
-    const never = readingFreshness(makeReading({ value: null, source_ts: null, ingested_ts: null, age_s: null, stale: true, quality: 'stale' }), now, 10);
+    expect(
+      readingFreshness(makeReading({ ingested_ts: at(29), stale: true }), now, null).quality,
+    ).toBe('stale');
+    const never = readingFreshness(
+      makeReading({
+        value: null,
+        source_ts: null,
+        ingested_ts: null,
+        age_s: null,
+        stale: true,
+        quality: 'stale',
+      }),
+      now,
+      10,
+    );
     expect(never).toMatchObject({ ageS: null, stale: true });
   });
   it('without stale_after_s only the server flag decides', () => {
-    expect(readingFreshness(makeReading({ ingested_ts: at(0), stale: false }), now, null).stale).toBe(false);
+    expect(
+      readingFreshness(makeReading({ ingested_ts: at(0), stale: false }), now, null).stale,
+    ).toBe(false);
   });
 });
 

@@ -114,9 +114,23 @@ describe('alarm lifecycle at cursor', () => {
   it('uses the first in-window transition to know the state before it (alarm raised before the window)', () => {
     const w = makeIncidentWindow({
       alarm_events: [
-        makeAlarmEvent({ id: 21, event_type: 'cleared', from_state: 'active_unacknowledged', to_state: 'cleared_unacknowledged', ts: iso(20) }),
+        makeAlarmEvent({
+          id: 21,
+          event_type: 'cleared',
+          from_state: 'active_unacknowledged',
+          to_state: 'cleared_unacknowledged',
+          ts: iso(20),
+        }),
       ],
-      alarms: [makeAlarm({ id: 7, raised_at: iso(-600), state: 'cleared_unacknowledged', condition_active: false, cleared_at: iso(20) })],
+      alarms: [
+        makeAlarm({
+          id: 7,
+          raised_at: iso(-600),
+          state: 'cleared_unacknowledged',
+          condition_active: false,
+          cleared_at: iso(20),
+        }),
+      ],
     });
     const m = buildReplayModel(w);
     expect(alarmStateAt(m, 7, at(5))).toBe('active_unacknowledged');
@@ -139,7 +153,9 @@ describe('phase and focus times', () => {
     expect(phaseAt(model, at(55))).toBe('after');
   });
   it('has no phase without a focus alarm', () => {
-    expect(phaseAt(buildReplayModel(makeIncidentWindow({ focus_alarm_id: null })), at(30))).toBeNull();
+    expect(
+      phaseAt(buildReplayModel(makeIncidentWindow({ focus_alarm_id: null })), at(30)),
+    ).toBeNull();
   });
   it('finds raised and cleared times inside the window', () => {
     expect(focusTimes(model)).toEqual({ raisedAt: at(30), clearedAt: at(55) });

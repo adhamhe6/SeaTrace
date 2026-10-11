@@ -1,5 +1,11 @@
 import { describe, expect, it } from 'vitest';
-import { buildAlarmSearch, filtersToQuery, hasActiveFilters, parseAlarmFilters, utcInputToIso } from './filters';
+import {
+  buildAlarmSearch,
+  filtersToQuery,
+  hasActiveFilters,
+  parseAlarmFilters,
+  utcInputToIso,
+} from './filters';
 
 const parse = (q: string) => parseAlarmFilters(new URLSearchParams(q));
 
@@ -15,7 +21,9 @@ describe('alarm filters <-> URL <-> API query', () => {
   });
   it('maps every filter into the API query', () => {
     const q = filtersToQuery(
-      parse('severity=critical&severity=warning&state=active_unacknowledged&vessel=VES-001&equipment=ME1&kind=data_quality&from=2026-03-01T10:00:00Z&to=2026-03-01T11:00:00Z&page=3&limit=50'),
+      parse(
+        'severity=critical&severity=warning&state=active_unacknowledged&vessel=VES-001&equipment=ME1&kind=data_quality&from=2026-03-01T10:00:00Z&to=2026-03-01T11:00:00Z&page=3&limit=50',
+      ),
     );
     expect(q).toEqual({
       open: true,
@@ -36,7 +44,9 @@ describe('alarm filters <-> URL <-> API query', () => {
   });
   it('serialises back to a minimal query string', () => {
     const f = parse('tab=history&severity=critical&vessel=VES-002&page=2');
-    expect(buildAlarmSearch(f).toString()).toBe('tab=history&severity=critical&vessel=VES-002&page=2');
+    expect(buildAlarmSearch(f).toString()).toBe(
+      'tab=history&severity=critical&vessel=VES-002&page=2',
+    );
     expect(buildAlarmSearch(parse('')).toString()).toBe('');
   });
   it('converts datetime-local input (UTC) to ISO', () => {

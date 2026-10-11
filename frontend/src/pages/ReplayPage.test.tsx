@@ -46,7 +46,9 @@ async function openReplay(route = '/replay?alarm=7', routes = alarmRoutes()) {
 
 const cursorTime = () => screen.getByTestId('cursor-time');
 const seek = (seconds: number) => {
-  fireEvent.change(screen.getByLabelText('Seek position in the replay window'), { target: { value: String(seconds * 1000) } });
+  fireEvent.change(screen.getByLabelText('Seek position in the replay window'), {
+    target: { value: String(seconds * 1000) },
+  });
 };
 const rowFor = (measurement: string) => within(screen.getByTestId(`cursor-${measurement}`));
 
@@ -57,7 +59,9 @@ describe('loading the replay', () => {
     expect(call.query.get('before_s')).toBe('300');
     expect(call.query.get('after_s')).toBe('300');
     expect(screen.getByText('Focus alarm')).toBeInTheDocument();
-    expect(screen.getByTestId('window-range')).toHaveTextContent('2026-03-01 10:00:00 UTC → 2026-03-01 10:01:00 UTC');
+    expect(screen.getByTestId('window-range')).toHaveTextContent(
+      '2026-03-01 10:00:00 UTC → 2026-03-01 10:01:00 UTC',
+    );
     expect(screen.getAllByRole('img', { name: /over the replay window/ })).toHaveLength(2);
   });
 
@@ -68,7 +72,9 @@ describe('loading the replay', () => {
   });
 
   it('supports ?vessel=&equipment=&from=&to= deep links', async () => {
-    const api = installApi({ 'GET /api/v1/incidents/window': () => makeIncidentWindow({ focus_alarm_id: null }) });
+    const api = installApi({
+      'GET /api/v1/incidents/window': () => makeIncidentWindow({ focus_alarm_id: null }),
+    });
     renderApp({ route: `/replay?vessel=VES-001&equipment=ME1&from=${iso(0)}&to=${iso(60)}` });
     await screen.findByTestId('replay-workbench');
     const q = api.lastCall('GET', '/api/v1/incidents/window')!.query;
@@ -105,7 +111,9 @@ describe('loading the replay', () => {
   });
 
   it('builds a window request from a preset or a custom UTC range', async () => {
-    const api = installApi({ 'GET /api/v1/incidents/window': () => makeIncidentWindow({ focus_alarm_id: null }) });
+    const api = installApi({
+      'GET /api/v1/incidents/window': () => makeIncidentWindow({ focus_alarm_id: null }),
+    });
     const user = userEvent.setup();
     renderApp({ route: '/replay' });
     await user.click(await screen.findByRole('button', { name: 'Load replay' }));
@@ -116,8 +124,12 @@ describe('loading the replay', () => {
     expect(Date.parse(q.get('to')!) - Date.parse(q.get('from')!)).toBe(15 * 60_000);
 
     await user.click(screen.getByRole('button', { name: 'Custom' }));
-    fireEvent.change(screen.getByLabelText('From (UTC)'), { target: { value: '2026-03-01T10:00:00' } });
-    fireEvent.change(screen.getByLabelText('To (UTC)'), { target: { value: '2026-03-01T10:20:00' } });
+    fireEvent.change(screen.getByLabelText('From (UTC)'), {
+      target: { value: '2026-03-01T10:00:00' },
+    });
+    fireEvent.change(screen.getByLabelText('To (UTC)'), {
+      target: { value: '2026-03-01T10:20:00' },
+    });
     await user.click(screen.getByRole('button', { name: 'Load replay' }));
     await waitFor(() => {
       q = api.lastCall('GET', '/api/v1/incidents/window')!.query;
@@ -131,8 +143,12 @@ describe('loading the replay', () => {
     const user = userEvent.setup();
     renderApp({ route: '/replay' });
     await user.click(await screen.findByRole('button', { name: 'Custom' }));
-    fireEvent.change(screen.getByLabelText('From (UTC)'), { target: { value: '2026-03-01T11:00:00' } });
-    fireEvent.change(screen.getByLabelText('To (UTC)'), { target: { value: '2026-03-01T10:00:00' } });
+    fireEvent.change(screen.getByLabelText('From (UTC)'), {
+      target: { value: '2026-03-01T11:00:00' },
+    });
+    fireEvent.change(screen.getByLabelText('To (UTC)'), {
+      target: { value: '2026-03-01T10:00:00' },
+    });
     await user.click(screen.getByRole('button', { name: 'Load replay' }));
     expect(await screen.findByText('The start must be earlier than the end.')).toBeInTheDocument();
     expect(api.callsTo('GET', '/api/v1/incidents/window')).toHaveLength(0);
@@ -143,10 +159,16 @@ describe('errors and empty data', () => {
   it('shows the window_too_large error with a hint and a retry', async () => {
     installApi({
       'GET /api/v1/incidents/window': () =>
-        apiError(422, 'window_too_large', 'Replay windows are limited to 7200 s (120 min) so the data stays playable'),
+        apiError(
+          422,
+          'window_too_large',
+          'Replay windows are limited to 7200 s (120 min) so the data stays playable',
+        ),
     });
     renderApp({ route: `/replay?vessel=VES-001&equipment=ME1&from=${iso(-86400)}&to=${iso(0)}` });
-    const alert = (await screen.findByText('Replay window too large')).closest('[role="alert"]') as HTMLElement;
+    const alert = (await screen.findByText('Replay window too large')).closest(
+      '[role="alert"]',
+    ) as HTMLElement;
     expect(alert).toHaveTextContent('Replay window too large');
     expect(alert).toHaveTextContent('limited to 7200 s');
     expect(alert).toHaveTextContent(/shorter time range/i);
@@ -231,7 +253,11 @@ describe('state at cursor uses the last STORED sample', () => {
     expect(within(open).getByText('Active - unacknowledged')).toBeInTheDocument();
     expect(screen.getByTestId('phase')).toHaveTextContent('During alarm');
     seek(47);
-    expect(within(screen.getByRole('list', { name: 'Open alarms at cursor' })).getByText('Active - acknowledged')).toBeInTheDocument();
+    expect(
+      within(screen.getByRole('list', { name: 'Open alarms at cursor' })).getByText(
+        'Active - acknowledged',
+      ),
+    ).toBeInTheDocument();
     seek(58);
     expect(screen.getByTestId('phase')).toHaveTextContent('After alarm (condition cleared)');
     expect(screen.getByText('No alarm was open at this position.')).toBeInTheDocument();
@@ -317,8 +343,13 @@ describe('playback controls', () => {
     expect(entries).toHaveLength(4); // raised, state change, acknowledged, cleared
     await user.click(within(timeline).getByRole('button', { name: /Acknowledged/ }));
     expect(cursorTime()).toHaveTextContent('10:00:45.000');
-    expect(within(timeline).getByRole('button', { name: /Acknowledged/ })).toHaveAttribute('aria-current', 'true');
-    expect(within(timeline).getByRole('button', { name: /Acknowledged/ })).toHaveTextContent('operator');
+    expect(within(timeline).getByRole('button', { name: /Acknowledged/ })).toHaveAttribute(
+      'aria-current',
+      'true',
+    );
+    expect(within(timeline).getByRole('button', { name: /Acknowledged/ })).toHaveTextContent(
+      'operator',
+    );
   });
 
   it('is operable from the keyboard: Space plays/pauses, arrows step, typing in a field is ignored', async () => {
@@ -349,10 +380,24 @@ describe('alarm markers', () => {
   it('passes alarm events and state changes to the chart as labelled markers and gaps as areas', async () => {
     const { echarts } = await import('@/ui/chart/echartsCore');
     await openReplay();
-    const chart = (echarts.init as unknown as { mock: { results: { value: { setOption: { mock: { calls: unknown[][] } } } }[] } }).mock.results[0]!.value;
-    const options = chart.setOption.mock.calls.map((c) => c[0] as { series: { markLine?: { data: { name: string; label: { formatter: string } }[] }; markArea?: { data: unknown[] } }[] });
+    const chart = (
+      echarts.init as unknown as {
+        mock: { results: { value: { setOption: { mock: { calls: unknown[][] } } } }[] };
+      }
+    ).mock.results[0]!.value;
+    const options = chart.setOption.mock.calls.map(
+      (c) =>
+        c[0] as {
+          series: {
+            markLine?: { data: { name: string; label: { formatter: string } }[] };
+            markArea?: { data: unknown[] };
+          }[];
+        },
+    );
     const top = options.at(-1)!;
     const marks = top.series[0]!.markLine!.data;
-    expect(marks.map((m) => m.label.formatter).filter(Boolean)).toEqual(expect.arrayContaining(['▲ WARN raised', '✓ WARN ack', '▼ WARN normal']));
+    expect(marks.map((m) => m.label.formatter).filter(Boolean)).toEqual(
+      expect.arrayContaining(['▲ WARN raised', '✓ WARN ack', '▼ WARN normal']),
+    );
   });
 });

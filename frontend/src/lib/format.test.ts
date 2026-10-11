@@ -44,7 +44,9 @@ describe('zone labels', () => {
     expect(zoneLabel('local', Date.now())).toBe(localOffsetLabel(Date.now()));
   });
   it('axis labels may include the date', () => {
-    expect(formatAxisTime(Date.parse('2026-03-01T09:05:07Z'), 'utc', true)).toBe('2026-03-01\n09:05:07');
+    expect(formatAxisTime(Date.parse('2026-03-01T09:05:07Z'), 'utc', true)).toBe(
+      '2026-03-01\n09:05:07',
+    );
   });
 });
 

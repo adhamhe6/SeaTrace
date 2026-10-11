@@ -24,7 +24,12 @@ describe('stateSegments', () => {
 describe('timelineEntries', () => {
   it('merges alarm events and state changes chronologically', () => {
     const e = timelineEntries(model);
-    expect(e.map((x) => `${x.kind}:${x.ts - T0}`)).toEqual(['alarm:30000', 'state:35000', 'alarm:45000', 'alarm:55000']);
+    expect(e.map((x) => `${x.kind}:${x.ts - T0}`)).toEqual([
+      'alarm:30000',
+      'state:35000',
+      'alarm:45000',
+      'alarm:55000',
+    ]);
     expect(e[0]?.severityLabel).toBe('Warning');
   });
 });

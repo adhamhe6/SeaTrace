@@ -13,10 +13,10 @@ from pathlib import Path
 import httpx
 import pytest
 import pytest_asyncio
-
 from app.config import Settings
 from app.container import Container
 from app.main import create_app
+
 from tests.conftest import OPERATOR_PW, _login
 
 REPO = Path(__file__).resolve().parents[3]
@@ -30,7 +30,9 @@ pytestmark = pytest.mark.integration
 def pytest_collection_modifyitems(config, items):  # type: ignore[no-untyped-def]
     if SIM_BIN.exists():
         return
-    skip = pytest.mark.skip(reason=f"simulator binary not found at {SIM_BIN} (build it or set SEATRACE_SIMULATOR_BIN)")
+    skip = pytest.mark.skip(
+        reason=f"simulator binary not found at {SIM_BIN} (build it or set SEATRACE_SIMULATOR_BIN)"
+    )
     for item in items:
         if "integration" in str(item.fspath):
             item.add_marker(skip)
@@ -51,8 +53,12 @@ class SimProcess:
 
     def start(self) -> None:
         self.proc = subprocess.Popen(  # noqa: S603
-            [str(SIM_BIN)], env=self.env, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
-            cwd=str(REPO / "simulator"))
+            [str(SIM_BIN)],
+            env=self.env,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+            cwd=str(REPO / "simulator"),
+        )
 
     def stop(self) -> int | None:
         if self.proc is None:
@@ -67,8 +73,12 @@ class SimProcess:
 
 def sim_env(port: int, **extra: str) -> dict[str, str]:
     env = {
-        "PATH": os.environ.get("PATH", ""), "SIM_OPCUA_PORT": str(port), "SIM_TICK_MS": "200",
-        "SIM_SEED": "7", "SIM_SECURITY_MODE": "none", "SIM_CONTROL_USER": CONTROL_USER,
+        "PATH": os.environ.get("PATH", ""),
+        "SIM_OPCUA_PORT": str(port),
+        "SIM_TICK_MS": "200",
+        "SIM_SEED": "7",
+        "SIM_SECURITY_MODE": "none",
+        "SIM_CONTROL_USER": CONTROL_USER,
         "SIM_CONTROL_PASSWORD": CONTROL_PASSWORD,
         "SIM_CONFIG": str(REPO / "simulator" / "config" / "fleet.json"),
     }
@@ -106,7 +116,9 @@ async def eventually(predicate, timeout: float = 30.0, interval: float = 0.2):  
 
 
 class Stack:
-    def __init__(self, container: Container, client: httpx.AsyncClient, op: dict[str, str], sim: SimProcess):
+    def __init__(
+        self, container: Container, client: httpx.AsyncClient, op: dict[str, str], sim: SimProcess
+    ):
         self.c, self.client, self.op, self.sim = container, client, op, sim
 
     async def get(self, path: str, **params):  # type: ignore[no-untyped-def]
@@ -121,11 +133,20 @@ class Stack:
 @pytest_asyncio.fixture
 async def stack(settings: Settings, engine, sim) -> AsyncIterator[Stack]:  # type: ignore[no-untyped-def]
     simulator = sim()
-    s = settings.model_copy(update={
-        "opcua_enabled": True, "opcua_endpoint": simulator.endpoint, "opcua_user": CONTROL_USER,
-        "opcua_password": CONTROL_PASSWORD, "opcua_backoff_min_s": 0.3, "opcua_backoff_max_s": 2.0,
-        "opcua_keepalive_interval_s": 0.5, "opcua_request_timeout_s": 2.0, "opcua_publish_interval_ms": 200,
-        "stale_after_s": 5.0})
+    s = settings.model_copy(
+        update={
+            "opcua_enabled": True,
+            "opcua_endpoint": simulator.endpoint,
+            "opcua_user": CONTROL_USER,
+            "opcua_password": CONTROL_PASSWORD,
+            "opcua_backoff_min_s": 0.3,
+            "opcua_backoff_max_s": 2.0,
+            "opcua_keepalive_interval_s": 0.5,
+            "opcua_request_timeout_s": 2.0,
+            "opcua_publish_interval_ms": 200,
+            "stale_after_s": 5.0,
+        }
+    )
     c = Container(s)
     app = create_app(s, c)
     async with app.router.lifespan_context(app):

@@ -5,9 +5,17 @@ import { describe, expect, it } from 'vitest';
 import { useLive } from '@/realtime/liveStore';
 import { installApi } from '@/test/mockApi';
 import { newQueryClient } from '@/test/render';
-import { FALLBACK_POLL_MS, LIVE_SAFETY_POLL_MS, useAnomaly, useHistory, useRefetchInterval } from './hooks';
+import {
+  FALLBACK_POLL_MS,
+  LIVE_SAFETY_POLL_MS,
+  useAnomaly,
+  useHistory,
+  useRefetchInterval,
+} from './hooks';
 
-const wrapper = ({ children }: { children: ReactNode }) => <QueryClientProvider client={newQueryClient()}>{children}</QueryClientProvider>;
+const wrapper = ({ children }: { children: ReactNode }) => (
+  <QueryClientProvider client={newQueryClient()}>{children}</QueryClientProvider>
+);
 
 describe('useRefetchInterval: REST polling is the fallback for a dead live channel', () => {
   it('polls every 5 s unless the websocket is open', () => {
@@ -32,7 +40,18 @@ describe('useRefetchInterval: REST polling is the fallback for a dead live chann
 describe('useHistory', () => {
   it('computes the window at fetch time from server-aligned time and picks raw vs bucketed', async () => {
     const api = installApi({
-      'GET /api/v1/telemetry/history': () => ({ vessel_code: 'V', equipment_code: 'E', from: '', to: '', bucket_s: null, units: {}, items: [], buckets: [], next_cursor: null, truncated: false }),
+      'GET /api/v1/telemetry/history': () => ({
+        vessel_code: 'V',
+        equipment_code: 'E',
+        from: '',
+        to: '',
+        bucket_s: null,
+        units: {},
+        items: [],
+        buckets: [],
+        next_cursor: null,
+        truncated: false,
+      }),
     });
     useLive.setState({ clockOffsetMs: 60_000 }); // server is one minute ahead of this browser
     const raw = renderHook(() => useHistory('V', 'E', 5), { wrapper });

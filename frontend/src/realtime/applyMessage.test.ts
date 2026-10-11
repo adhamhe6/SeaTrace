@@ -47,10 +47,20 @@ afterEach(() => {
 
 describe('telemetry', () => {
   it('patches readings in the vessel detail cache and keeps static fields', () => {
-    const old = makeReading({ value: 80, source_ts: '2026-03-01T10:00:00Z', ingested_ts: '2026-03-01T10:00:00Z', stale: true, age_s: 99 });
-    client.setQueryData<VesselDetail>(keys.vessel('VES-001'), makeVessel({ equipment: [{ ...makeVessel().equipment[0]!, readings: [old] }] }));
+    const old = makeReading({
+      value: 80,
+      source_ts: '2026-03-01T10:00:00Z',
+      ingested_ts: '2026-03-01T10:00:00Z',
+      stale: true,
+      age_s: 99,
+    });
+    client.setQueryData<VesselDetail>(
+      keys.vessel('VES-001'),
+      makeVessel({ equipment: [{ ...makeVessel().equipment[0]!, readings: [old] }] }),
+    );
     applyLiveMessage(client, telemetry([item()]));
-    const reading = client.getQueryData<VesselDetail>(keys.vessel('VES-001'))!.equipment[0]!.readings[0]!;
+    const reading = client.getQueryData<VesselDetail>(keys.vessel('VES-001'))!.equipment[0]!
+      .readings[0]!;
     expect(reading.value).toBe(91.2);
     expect(reading.stale).toBe(false);
     expect(reading.age_s).toBeLessThan(2);
@@ -59,15 +69,26 @@ describe('telemetry', () => {
   });
 
   it('patches the latest-readings list cache and ignores unknown sensors', () => {
-    client.setQueryData<LatestReading[]>(keys.latest(), [makeReading({ value: 1 }), makeReading({ measurement: 'rpm', value: 2 })]);
-    applyLiveMessage(client, telemetry([item({ measurement: 'rpm', value: 99 }), item({ measurement: 'unknown', value: 5 })]));
+    client.setQueryData<LatestReading[]>(keys.latest(), [
+      makeReading({ value: 1 }),
+      makeReading({ measurement: 'rpm', value: 2 }),
+    ]);
+    applyLiveMessage(
+      client,
+      telemetry([
+        item({ measurement: 'rpm', value: 99 }),
+        item({ measurement: 'unknown', value: 5 }),
+      ]),
+    );
     const list = client.getQueryData<LatestReading[]>(keys.latest())!;
     expect(list.map((r) => r.value)).toEqual([1, 99]);
   });
 
   it('does not let an older sample overwrite a newer reading', () => {
     const newer = new Date().toISOString();
-    client.setQueryData<LatestReading[]>(keys.latest(), [makeReading({ value: 50, source_ts: newer })]);
+    client.setQueryData<LatestReading[]>(keys.latest(), [
+      makeReading({ value: 50, source_ts: newer }),
+    ]);
     applyLiveMessage(client, telemetry([item({ value: 10, source_ts: '2020-01-01T00:00:00Z' })]));
     expect(client.getQueryData<LatestReading[]>(keys.latest())![0]!.value).toBe(50);
   });
@@ -82,7 +103,10 @@ describe('telemetry', () => {
 });
 
 describe('alarms', () => {
-  const alarmMessage = (event: string, severity: 'critical' | 'warning' = 'critical'): DataMessage => ({
+  const alarmMessage = (
+    event: string,
+    severity: 'critical' | 'warning' = 'critical',
+  ): DataMessage => ({
     type: 'alarm',
     seq: 2,
     ts: new Date().toISOString(),
@@ -114,7 +138,10 @@ describe('alarms', () => {
   });
 
   it('updates a cached alarm detail and appends the new event once', () => {
-    client.setQueryData<AlarmDetail>(keys.alarm(7), makeAlarmDetail({ events: [makeAlarmEvent({ id: 1 })] }));
+    client.setQueryData<AlarmDetail>(
+      keys.alarm(7),
+      makeAlarmDetail({ events: [makeAlarmEvent({ id: 1 })] }),
+    );
     applyLiveMessage(client, alarmMessage('acknowledged'));
     applyLiveMessage(client, alarmMessage('acknowledged'));
     const detail = client.getQueryData<AlarmDetail>(keys.alarm(7))!;
@@ -129,9 +156,16 @@ describe('state and status messages', () => {
       type: 'equipment_state',
       seq: 3,
       ts: '',
-      data: { vessel_code: 'VES-001', equipment_code: 'ME1', state: 'TRIPPED', source_ts: '2026-03-01T10:00:00Z' },
+      data: {
+        vessel_code: 'VES-001',
+        equipment_code: 'ME1',
+        state: 'TRIPPED',
+        source_ts: '2026-03-01T10:00:00Z',
+      },
     });
-    expect(client.getQueryData<VesselDetail>(keys.vessel('VES-001'))!.equipment[0]!.state).toBe('TRIPPED');
+    expect(client.getQueryData<VesselDetail>(keys.vessel('VES-001'))!.equipment[0]!.state).toBe(
+      'TRIPPED',
+    );
   });
 
   it('stores the pushed OPC UA status and mirrors it into the system status cache', () => {
@@ -148,9 +182,18 @@ describe('state and status messages', () => {
       type: 'scenario',
       seq: 5,
       ts: '',
-      data: { action: 'activate', scenario_id: 'engine_overheat', vessel_code: 'VES-001', accepted: true, actor: 'operator', simulator: makeSimStatus() },
+      data: {
+        action: 'activate',
+        scenario_id: 'engine_overheat',
+        vessel_code: 'VES-001',
+        accepted: true,
+        actor: 'operator',
+        simulator: makeSimStatus(),
+      },
     });
     vi.advanceTimersByTime(400);
-    expect(spy.mock.calls.map((c) => JSON.stringify(c[0]?.queryKey))).toContain(JSON.stringify(keys.simulatorStatus));
+    expect(spy.mock.calls.map((c) => JSON.stringify(c[0]?.queryKey))).toContain(
+      JSON.stringify(keys.simulatorStatus),
+    );
   });
 });
