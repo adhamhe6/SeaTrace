@@ -17,16 +17,28 @@ router = APIRouter(prefix="/auth", tags=["auth"])
 
 _DUMMY_HASH = hash_password("not-a-real-password")  # equalise timing for unknown usernames
 _MAX_FAILURES = 5
+_MAX_KEYS = 10_000
 _WINDOW_S = 60.0
 _failures: dict[str, deque[float]] = defaultdict(deque)
 
 
 def _throttled(key: str) -> bool:
-    q = _failures[key]
     now = time.monotonic()
+    q = _failures.get(key)
+    if q is None:
+        return False
     while q and now - q[0] > _WINDOW_S:
         q.popleft()
+    if not q:
+        del _failures[key]  # keep the table from growing with one-off usernames
+        return False
     return len(q) >= _MAX_FAILURES
+
+
+def _record_failure(key: str) -> None:
+    if len(_failures) >= _MAX_KEYS and key not in _failures:
+        _failures.pop(next(iter(_failures)))  # evict the oldest tracked key
+    _failures[key].append(time.monotonic())
 
 
 def reset_throttle() -> None:
@@ -45,7 +57,7 @@ async def login(body: LoginRequest, request: Request, container: ContainerDep) -
         user = await session.scalar(select(m.User).where(m.User.username == body.username))
     ok = verify_password(body.password, user.password_hash if user else _DUMMY_HASH)
     if user is None or not ok or not user.is_active:
-        _failures[key].append(time.monotonic())
+        _record_failure(key)
         raise AppError(401, "invalid_credentials", "Invalid username or password")
     _failures.pop(key, None)
     token, expires = create_access_token(
