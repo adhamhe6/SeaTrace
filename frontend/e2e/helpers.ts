@@ -43,8 +43,3 @@ export async function listAlarms(request: APIRequestContext, token: string, quer
   expect(response.ok()).toBeTruthy();
   return ((await response.json()) as { items: AlarmRow[] }).items;
 }
-
-export async function highestAlarmId(request: APIRequestContext, token: string): Promise<number> {
-  const items = await listAlarms(request, token, 'limit=1');
-  return items[0]?.id ?? 0;
-}

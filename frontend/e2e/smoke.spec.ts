@@ -1,5 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
-import { highestAlarmId, listAlarms, login, operator, sessionToken, viewer } from './helpers';
+import { listAlarms, login, operator, sessionToken, viewer } from './helpers';
 
 const SCENARIO_NAME = 'Engine overheating';
 const VESSEL = 'VES-001';
@@ -51,9 +51,18 @@ test.describe('operator incident workflow', () => {
   test('activate a fault, see the alarm, acknowledge it, inspect history, replay it and clear the scenario', async ({ page, request }) => {
     await login(page, operator());
     const token = await sessionToken(page);
-    // Start from a clean simulator (a previous aborted run may have left a scenario active).
+    // Start from a clean simulator (a previous aborted run may have left a scenario active) and wait
+    // until no condition alarm on ME1 is still active.
     await request.post('/api/v1/simulator/reset', { headers: { Authorization: `Bearer ${token}` } });
-    const baseline = await highestAlarmId(request, token);
+    await expect
+      .poll(
+        async () => {
+          const items = await listAlarms(request, token, `vessel=${VESSEL}&equipment=ME1&kind=condition&open=true&limit=50`);
+          return items.filter((a) => a.state.startsWith('active')).length;
+        },
+        { timeout: 90_000, intervals: [2000] },
+      )
+      .toBe(0);
 
     // 1. Activate the scenario from the simulator page
     await page.goto('/simulator');
@@ -63,15 +72,15 @@ test.describe('operator incident workflow', () => {
     await expect(card.getByText(/Scenario activated on VES-001/)).toBeVisible();
     await expect(page.getByRole('list', { name: 'Active scenarios' })).toContainText(SCENARIO_NAME);
 
-    // 2. Wait (generously) for a condition alarm on ME1 raised by this scenario
+    // 2. Wait (generously) for an unacknowledged condition alarm on ME1 caused by this scenario.
+    //    A re-triggered alarm is reactivated (same id), so we select by state rather than by a new id.
     let alarmId = 0;
     await expect
       .poll(
         async () => {
-          const items = await listAlarms(request, token, `vessel=${VESSEL}&equipment=ME1&kind=condition&open=true&limit=20`);
-          const fresh = items.filter((a) => a.id > baseline);
-          alarmId = Math.min(...fresh.map((a) => a.id), Number.POSITIVE_INFINITY) || 0;
-          return Number.isFinite(alarmId) && alarmId > 0;
+          const items = await listAlarms(request, token, `vessel=${VESSEL}&equipment=ME1&kind=condition&state=active_unacknowledged&limit=20`);
+          alarmId = items.at(-1)?.id ?? 0;
+          return alarmId > 0;
         },
         { timeout: 180_000, intervals: [2000], message: 'overheating needs tens of seconds to cross the alarm threshold' },
       )
