@@ -93,7 +93,7 @@ test.describe('operator incident workflow', () => {
     await page.goto(`/alarms/${String(alarmId)}`);
     const history = page.getByRole('list', { name: 'Alarm history, oldest first' });
     await expect(history.getByRole('listitem').first()).toContainText('Raised');
-    const ack = history.getByRole('listitem').filter({ hasText: 'Acknowledged' });
+    const ack = history.getByRole('listitem').filter({ hasText: /^Acknowledged/ });
     await expect(ack).toContainText(operator().user);
     await expect(ack).toContainText('e2e: seen on the bridge');
 
