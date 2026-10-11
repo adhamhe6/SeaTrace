@@ -1,0 +1,122 @@
+# SeaTrace – complete local stack:  docker compose up --build
+#   web UI  http://localhost:${SEATRACE_HTTP_PORT:-8080}      API docs  http://localhost:8000/api/v1/docs
+# Configuration comes from `.env` (see .env.example / scripts/init-env.sh).
+name: seatrace
+
+x-restart: &restart
+  restart: unless-stopped
+
+services:
+  db:
+    image: postgres:16-alpine
+    <<: *restart
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-seatrace}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?run scripts/init-env.sh or copy .env.example to .env}
+      POSTGRES_DB: ${POSTGRES_DB:-seatrace}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 4s
+      retries: 15
+      start_period: 10s
+    # Not published to the host. Use: docker compose exec db psql -U seatrace seatrace
+
+  # One-shot: development PKI for the OPC UA link (self-signed, DEVELOPMENT ONLY). Idempotent: keeps existing certs.
+  pki-init:
+    build:
+      context: .
+      dockerfile: simulator/Dockerfile
+    image: seatrace-simulator:local
+    user: root
+    entrypoint: ["/bin/bash", "-c"]
+    command:
+      - |
+        set -e
+        PKI_DIR=/pki /opt/seatrace/gen-dev-certs.sh
+        chown -R 10002:10002 /pki/simulator
+        chown -R 10001:10001 /pki/backend
+        chmod 755 /pki /pki/simulator /pki/backend
+    volumes:
+      - pki:/pki
+    restart: "no"
+
+  simulator:
+    image: seatrace-simulator:local
+    <<: *restart
+    depends_on:
+      pki-init:
+        condition: service_completed_successfully
+    environment:
+      SIM_OPCUA_PORT: "4840"
+      SIM_SEED: ${SIM_SEED:-42}
+      SIM_TICK_MS: ${SIM_TICK_MS:-1000}
+      SIM_SECURITY_MODE: ${SIM_SECURITY_MODE:-secure}
+      SIM_CONTROL_USER: ${SIM_CONTROL_USER:-seatrace-backend}
+      SIM_CONTROL_PASSWORD: ${SIM_CONTROL_PASSWORD:?set SIM_CONTROL_PASSWORD in .env}
+      SIM_SERVER_CERT: /pki/simulator/cert.der
+      SIM_SERVER_KEY: /pki/simulator/key.der
+      SIM_TRUSTED_CLIENT_CERTS: /pki/backend/cert.der
+    volumes:
+      - pki:/pki:ro
+    ports:
+      - "127.0.0.1:4840:4840"   # for OPC UA browsers (e.g. UaExpert); bound to loopback only
+    stop_grace_period: 10s
+
+  migrate:
+    build: ./backend
+    image: seatrace-backend:local
+    command: ["alembic", "upgrade", "head"]
+    environment:
+      SEATRACE_DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-seatrace}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB:-seatrace}
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: "no"
+
+  backend:
+    image: seatrace-backend:local
+    <<: *restart
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+      simulator:
+        condition: service_healthy
+    environment:
+      SEATRACE_ENV: ${SEATRACE_ENV:-development}
+      SEATRACE_LOG_LEVEL: ${SEATRACE_LOG_LEVEL:-INFO}
+      SEATRACE_DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-seatrace}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB:-seatrace}
+      SEATRACE_SECRET_KEY: ${SEATRACE_SECRET_KEY:?set SEATRACE_SECRET_KEY in .env}
+      SEATRACE_CORS_ORIGINS: ${SEATRACE_CORS_ORIGINS:-http://localhost:5173}
+      SEATRACE_DEMO_OPERATOR_USERNAME: ${SEATRACE_DEMO_OPERATOR_USERNAME:-operator}
+      SEATRACE_DEMO_OPERATOR_PASSWORD: ${SEATRACE_DEMO_OPERATOR_PASSWORD:-}
+      SEATRACE_DEMO_VIEWER_USERNAME: ${SEATRACE_DEMO_VIEWER_USERNAME:-viewer}
+      SEATRACE_DEMO_VIEWER_PASSWORD: ${SEATRACE_DEMO_VIEWER_PASSWORD:-}
+      SEATRACE_OPCUA_ENDPOINT: opc.tcp://simulator:4840
+      SEATRACE_OPCUA_SECURITY: ${SIM_SECURITY_MODE:-secure}
+      SEATRACE_OPCUA_CLIENT_CERT: /pki/backend/cert.pem
+      SEATRACE_OPCUA_CLIENT_KEY: /pki/backend/key.pem
+      SEATRACE_OPCUA_SERVER_CERT: /pki/simulator/cert.pem
+      SEATRACE_OPCUA_USER: ${SIM_CONTROL_USER:-seatrace-backend}
+      SEATRACE_OPCUA_PASSWORD: ${SIM_CONTROL_PASSWORD}
+    volumes:
+      - pki:/pki:ro
+    ports:
+      - "127.0.0.1:8000:8000"   # direct API access (docs, curl); the UI uses the proxied /api on the web port
+    stop_grace_period: 20s
+
+  frontend:
+    build: ./frontend
+    image: seatrace-frontend:local
+    <<: *restart
+    depends_on:
+      backend:
+        condition: service_healthy
+    ports:
+      - "${SEATRACE_HTTP_PORT:-8080}:80"
+
+volumes:
+  pgdata:
+  pki:

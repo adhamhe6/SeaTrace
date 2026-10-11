@@ -1,0 +1,122 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  simulator:
+    name: Simulator (C++20 build + tests)
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install toolchain
+        run: sudo apt-get update && sudo apt-get install -y --no-install-recommends cmake ninja-build g++ libssl-dev clang-format
+      - name: Format check
+        run: find simulator/src simulator/tests -name '*.cpp' -o -name '*.hpp' | xargs clang-format --dry-run --Werror
+      - name: Configure
+        run: cmake -S simulator -B simulator/build -G Ninja -DCMAKE_BUILD_TYPE=Release
+      - name: Build
+        run: cmake --build simulator/build
+      - name: Unit tests
+        run: ctest --test-dir simulator/build --output-on-failure
+      - uses: actions/upload-artifact@v4
+        with:
+          name: seatrace_simulator
+          path: simulator/build/seatrace_simulator
+          retention-days: 3
+
+  backend:
+    name: Backend (lint, types, tests, integration)
+    runs-on: ubuntu-24.04
+    needs: simulator
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: seatrace
+          POSTGRES_PASSWORD: seatrace
+          POSTGRES_DB: postgres
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U seatrace" --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      SEATRACE_TEST_DATABASE_URL: postgresql+asyncpg://seatrace:seatrace@localhost:5432/postgres
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with:
+          version: "0.13.0"
+          python-version: "3.13"
+      - name: Install dependencies (locked)
+        run: uv sync --frozen
+      - name: Ruff lint
+        run: uv run ruff check app tests scripts
+      - name: Ruff format check
+        run: uv run ruff format --check app tests scripts migrations
+      - name: Mypy (strict)
+        run: uv run mypy
+      - uses: actions/download-artifact@v4
+        with:
+          name: seatrace_simulator
+          path: simulator-bin
+      - name: Make simulator executable
+        run: chmod +x ../simulator-bin/seatrace_simulator || chmod +x simulator-bin/seatrace_simulator
+      - name: Tests (unit + API + migrations + integration with the real C++ simulator)
+        run: |
+          export SEATRACE_SIMULATOR_BIN="$GITHUB_WORKSPACE/backend/simulator-bin/seatrace_simulator"
+          uv run pytest -q --cov=app --cov-report=term-missing
+      - name: OpenAPI document is up to date
+        run: |
+          PYTHONPATH=. uv run python scripts/export_openapi.py /tmp/openapi.json
+          diff -q /tmp/openapi.json ../docs/openapi.json
+
+  frontend:
+    name: Frontend (lint, types, tests, build)
+    runs-on: ubuntu-24.04
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run format:check
+      - run: npm run typecheck
+      - run: npm run test:coverage
+      - run: npm run build
+
+  compose:
+    name: Docker Compose end-to-end
+    runs-on: ubuntu-24.04
+    needs: [simulator, backend, frontend]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Create .env with generated secrets
+        run: scripts/init-env.sh
+      - name: Build and start the stack
+        run: docker compose up --build --detach --wait --wait-timeout 300
+      - name: Smoke test through the web UI port
+        run: python3 scripts/smoke_test.py
+      - name: Container logs on failure
+        if: failure()
+        run: docker compose logs --no-color --tail=200
+      - name: Tear down
+        if: always()
+        run: docker compose down -v

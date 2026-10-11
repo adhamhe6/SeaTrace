@@ -1,0 +1,340 @@
+{
+  "schema_version": 1,
+  "description": "SeaTrace simulated fleet. All ranges, rated values and tuning parameters are illustrative simulation parameters, not authoritative operating limits of any real vessel or equipment.",
+  "vessels": [
+    {
+      "code": "VES-001",
+      "name": "MV Aurora Tide",
+      "description": "Bulk carrier, slow-speed main engine (illustrative).",
+      "initial_scenarios": [],
+      "equipment": [
+        {
+          "code": "ME1",
+          "name": "Main Engine",
+          "type": "MainEngine",
+          "initial_state": "RUNNING",
+          "rated": {
+            "trip_temperature_c": 118
+          },
+          "parameters": {
+            "load_period_s": 600,
+            "load_phase_rad": 0.0,
+            "thermal_tau_s": 30,
+            "trip_delay_s": 5,
+            "start_duration_s": 15
+          },
+          "measurements": [
+            {
+              "name": "Rpm",
+              "unit": "rpm",
+              "nominal_min": 90,
+              "nominal_max": 105,
+              "plausible_min": 0,
+              "plausible_max": 140,
+              "noise_sigma": 0.4
+            },
+            {
+              "name": "Temperature",
+              "unit": "°C",
+              "nominal_min": 78,
+              "nominal_max": 88,
+              "plausible_min": 0,
+              "plausible_max": 200,
+              "noise_sigma": 0.25
+            },
+            {
+              "name": "Vibration",
+              "unit": "mm/s",
+              "nominal_min": 2.0,
+              "nominal_max": 4.0,
+              "plausible_min": 0,
+              "plausible_max": 30,
+              "noise_sigma": 0.08
+            },
+            {
+              "name": "Load",
+              "unit": "%",
+              "nominal_min": 60,
+              "nominal_max": 80,
+              "plausible_min": 0,
+              "plausible_max": 110,
+              "noise_sigma": 0.5
+            }
+          ]
+        },
+        {
+          "code": "GEN1",
+          "name": "Generator 1",
+          "type": "Generator",
+          "initial_state": "RUNNING",
+          "rated": {
+            "power_kw": 625,
+            "frequency_hz": 50.0
+          },
+          "parameters": {
+            "demand_period_s": 900,
+            "demand_phase_rad": 0.0,
+            "demand_noise_pct": 1.2,
+            "droop_hz": 0.6
+          },
+          "measurements": [
+            {
+              "name": "PowerOutput",
+              "unit": "kW",
+              "nominal_min": 300,
+              "nominal_max": 500,
+              "plausible_min": 0,
+              "plausible_max": 800,
+              "noise_sigma": 3.0
+            },
+            {
+              "name": "Load",
+              "unit": "%",
+              "nominal_min": 48,
+              "nominal_max": 80,
+              "plausible_min": 0,
+              "plausible_max": 120,
+              "noise_sigma": 0.4
+            },
+            {
+              "name": "Frequency",
+              "unit": "Hz",
+              "nominal_min": 49.8,
+              "nominal_max": 50.2,
+              "plausible_min": 0,
+              "plausible_max": 65,
+              "noise_sigma": 0.015
+            }
+          ]
+        },
+        {
+          "code": "COOL1",
+          "name": "Jacket Cooling System",
+          "type": "CoolingSystem",
+          "initial_state": "RUNNING",
+          "rated": {
+            "pressure_bar": 2.6
+          },
+          "parameters": {
+            "sea_temperature_c": 28,
+            "engine_coupling": 0.67
+          },
+          "measurements": [
+            {
+              "name": "Pressure",
+              "unit": "bar",
+              "nominal_min": 2.2,
+              "nominal_max": 3.0,
+              "plausible_min": 0,
+              "plausible_max": 10,
+              "noise_sigma": 0.02
+            },
+            {
+              "name": "Temperature",
+              "unit": "°C",
+              "nominal_min": 60,
+              "nominal_max": 70,
+              "plausible_min": 0,
+              "plausible_max": 150,
+              "noise_sigma": 0.15
+            }
+          ]
+        },
+        {
+          "code": "BILGE1",
+          "name": "Bilge System",
+          "type": "BilgeSystem",
+          "initial_state": "STANDBY",
+          "rated": {
+            "pump_capacity_cm_per_s": 0.8,
+            "pump_start_level_cm": 35,
+            "pump_stop_level_cm": 12
+          },
+          "parameters": {
+            "baseline_level_cm": 9,
+            "inflow_sigma_cm_per_s": 0.18
+          },
+          "measurements": [
+            {
+              "name": "WaterLevel",
+              "unit": "cm",
+              "nominal_min": 3,
+              "nominal_max": 20,
+              "plausible_min": 0,
+              "plausible_max": 150,
+              "noise_sigma": 0.1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "VES-002",
+      "name": "MV Baltic Meridian",
+      "description": "Container feeder, slightly smaller plant with a different load profile (illustrative).",
+      "initial_scenarios": [],
+      "equipment": [
+        {
+          "code": "ME1",
+          "name": "Main Engine",
+          "type": "MainEngine",
+          "initial_state": "RUNNING",
+          "rated": {
+            "trip_temperature_c": 120
+          },
+          "parameters": {
+            "load_period_s": 840,
+            "load_phase_rad": 2.1,
+            "thermal_tau_s": 36,
+            "trip_delay_s": 5,
+            "start_duration_s": 18,
+            "load_noise_pct": 1.4
+          },
+          "measurements": [
+            {
+              "name": "Rpm",
+              "unit": "rpm",
+              "nominal_min": 88,
+              "nominal_max": 102,
+              "plausible_min": 0,
+              "plausible_max": 140,
+              "noise_sigma": 0.45
+            },
+            {
+              "name": "Temperature",
+              "unit": "°C",
+              "nominal_min": 76,
+              "nominal_max": 86,
+              "plausible_min": 0,
+              "plausible_max": 200,
+              "noise_sigma": 0.3
+            },
+            {
+              "name": "Vibration",
+              "unit": "mm/s",
+              "nominal_min": 2.2,
+              "nominal_max": 4.2,
+              "plausible_min": 0,
+              "plausible_max": 30,
+              "noise_sigma": 0.09
+            },
+            {
+              "name": "Load",
+              "unit": "%",
+              "nominal_min": 55,
+              "nominal_max": 78,
+              "plausible_min": 0,
+              "plausible_max": 110,
+              "noise_sigma": 0.6
+            }
+          ]
+        },
+        {
+          "code": "GEN1",
+          "name": "Generator 1",
+          "type": "Generator",
+          "initial_state": "RUNNING",
+          "rated": {
+            "power_kw": 700,
+            "frequency_hz": 50.0
+          },
+          "parameters": {
+            "demand_period_s": 1200,
+            "demand_phase_rad": 1.3,
+            "demand_noise_pct": 1.8,
+            "droop_hz": 0.5
+          },
+          "measurements": [
+            {
+              "name": "PowerOutput",
+              "unit": "kW",
+              "nominal_min": 320,
+              "nominal_max": 520,
+              "plausible_min": 0,
+              "plausible_max": 900,
+              "noise_sigma": 3.5
+            },
+            {
+              "name": "Load",
+              "unit": "%",
+              "nominal_min": 46,
+              "nominal_max": 74,
+              "plausible_min": 0,
+              "plausible_max": 120,
+              "noise_sigma": 0.4
+            },
+            {
+              "name": "Frequency",
+              "unit": "Hz",
+              "nominal_min": 49.8,
+              "nominal_max": 50.2,
+              "plausible_min": 0,
+              "plausible_max": 65,
+              "noise_sigma": 0.02
+            }
+          ]
+        },
+        {
+          "code": "COOL1",
+          "name": "Jacket Cooling System",
+          "type": "CoolingSystem",
+          "initial_state": "RUNNING",
+          "rated": {
+            "pressure_bar": 2.5
+          },
+          "parameters": {
+            "sea_temperature_c": 20,
+            "engine_coupling": 0.705,
+            "pressure_wobble_bar": 0.05
+          },
+          "measurements": [
+            {
+              "name": "Pressure",
+              "unit": "bar",
+              "nominal_min": 2.1,
+              "nominal_max": 2.9,
+              "plausible_min": 0,
+              "plausible_max": 10,
+              "noise_sigma": 0.025
+            },
+            {
+              "name": "Temperature",
+              "unit": "°C",
+              "nominal_min": 58,
+              "nominal_max": 68,
+              "plausible_min": 0,
+              "plausible_max": 150,
+              "noise_sigma": 0.18
+            }
+          ]
+        },
+        {
+          "code": "BILGE1",
+          "name": "Bilge System",
+          "type": "BilgeSystem",
+          "initial_state": "STANDBY",
+          "rated": {
+            "pump_capacity_cm_per_s": 0.9,
+            "pump_start_level_cm": 35,
+            "pump_stop_level_cm": 12
+          },
+          "parameters": {
+            "baseline_level_cm": 7,
+            "inflow_sigma_cm_per_s": 0.15
+          },
+          "measurements": [
+            {
+              "name": "WaterLevel",
+              "unit": "cm",
+              "nominal_min": 3,
+              "nominal_max": 20,
+              "plausible_min": 0,
+              "plausible_max": 150,
+              "noise_sigma": 0.12
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
