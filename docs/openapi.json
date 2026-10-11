@@ -1,0 +1,3829 @@
+{
+  "components": {
+    "schemas": {
+      "AcknowledgeRequest": {
+        "properties": {
+          "note": {
+            "anyOf": [
+              {
+                "maxLength": 500,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          }
+        },
+        "title": "AcknowledgeRequest",
+        "type": "object"
+      },
+      "ActiveScenario": {
+        "properties": {
+          "ends_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ends At"
+          },
+          "scenario_id": {
+            "title": "Scenario Id",
+            "type": "string"
+          },
+          "started_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Started At"
+          },
+          "vessel_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Vessel Code"
+          }
+        },
+        "required": [
+          "scenario_id",
+          "vessel_code",
+          "started_at",
+          "ends_at"
+        ],
+        "title": "ActiveScenario",
+        "type": "object"
+      },
+      "AlarmCounts": {
+        "properties": {
+          "critical": {
+            "default": 0,
+            "title": "Critical",
+            "type": "integer"
+          },
+          "info": {
+            "default": 0,
+            "title": "Info",
+            "type": "integer"
+          },
+          "unacknowledged": {
+            "default": 0,
+            "title": "Unacknowledged",
+            "type": "integer"
+          },
+          "warning": {
+            "default": 0,
+            "title": "Warning",
+            "type": "integer"
+          }
+        },
+        "title": "AlarmCounts",
+        "type": "object"
+      },
+      "AlarmDetail": {
+        "properties": {
+          "acknowledged": {
+            "title": "Acknowledged",
+            "type": "boolean"
+          },
+          "acknowledged_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Acknowledged At"
+          },
+          "acknowledged_by": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Acknowledged By"
+          },
+          "cleared_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cleared At"
+          },
+          "comparison": {
+            "title": "Comparison",
+            "type": "string"
+          },
+          "condition_active": {
+            "title": "Condition Active",
+            "type": "boolean"
+          },
+          "equipment_code": {
+            "title": "Equipment Code",
+            "type": "string"
+          },
+          "equipment_name": {
+            "title": "Equipment Name",
+            "type": "string"
+          },
+          "events": {
+            "items": {
+              "$ref": "#/components/schemas/AlarmEventOut"
+            },
+            "title": "Events",
+            "type": "array"
+          },
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/AlarmKind"
+          },
+          "last_value": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Value"
+          },
+          "last_value_ts": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Value Ts"
+          },
+          "measurement": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Measurement"
+          },
+          "message": {
+            "title": "Message",
+            "type": "string"
+          },
+          "occurrence_count": {
+            "title": "Occurrence Count",
+            "type": "integer"
+          },
+          "raised_at": {
+            "format": "date-time",
+            "title": "Raised At",
+            "type": "string"
+          },
+          "rule": {
+            "$ref": "#/components/schemas/RuleRef"
+          },
+          "severity": {
+            "$ref": "#/components/schemas/Severity"
+          },
+          "state": {
+            "$ref": "#/components/schemas/AlarmState"
+          },
+          "threshold": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Threshold"
+          },
+          "trigger_ts": {
+            "format": "date-time",
+            "title": "Trigger Ts",
+            "type": "string"
+          },
+          "trigger_value": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Trigger Value"
+          },
+          "unit": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Unit"
+          },
+          "vessel_code": {
+            "title": "Vessel Code",
+            "type": "string"
+          },
+          "vessel_name": {
+            "title": "Vessel Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "rule",
+          "kind",
+          "severity",
+          "state",
+          "condition_active",
+          "acknowledged",
+          "vessel_code",
+          "vessel_name",
+          "equipment_code",
+          "equipment_name",
+          "measurement",
+          "unit",
+          "message",
+          "comparison",
+          "threshold",
+          "trigger_value",
+          "trigger_ts",
+          "last_value",
+          "last_value_ts",
+          "raised_at",
+          "cleared_at",
+          "acknowledged_at",
+          "acknowledged_by",
+          "occurrence_count",
+          "events"
+        ],
+        "title": "AlarmDetail",
+        "type": "object"
+      },
+      "AlarmEventOut": {
+        "properties": {
+          "actor": {
+            "title": "Actor",
+            "type": "string"
+          },
+          "alarm_id": {
+            "title": "Alarm Id",
+            "type": "integer"
+          },
+          "details": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Details"
+          },
+          "event_type": {
+            "title": "Event Type",
+            "type": "string"
+          },
+          "from_state": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AlarmState"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          },
+          "recorded_at": {
+            "format": "date-time",
+            "title": "Recorded At",
+            "type": "string"
+          },
+          "to_state": {
+            "$ref": "#/components/schemas/AlarmState"
+          },
+          "ts": {
+            "description": "When the transition happened (source time or operator action time)",
+            "format": "date-time",
+            "title": "Ts",
+            "type": "string"
+          },
+          "value": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Value"
+          }
+        },
+        "required": [
+          "id",
+          "alarm_id",
+          "event_type",
+          "from_state",
+          "to_state",
+          "ts",
+          "recorded_at",
+          "actor",
+          "value",
+          "note",
+          "details"
+        ],
+        "title": "AlarmEventOut",
+        "type": "object"
+      },
+      "AlarmKind": {
+        "enum": [
+          "condition",
+          "data_quality",
+          "communication"
+        ],
+        "title": "AlarmKind",
+        "type": "string"
+      },
+      "AlarmList": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/AlarmOut"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "limit": {
+            "title": "Limit",
+            "type": "integer"
+          },
+          "offset": {
+            "title": "Offset",
+            "type": "integer"
+          },
+          "total": {
+            "title": "Total",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "items",
+          "total",
+          "limit",
+          "offset"
+        ],
+        "title": "AlarmList",
+        "type": "object"
+      },
+      "AlarmOut": {
+        "properties": {
+          "acknowledged": {
+            "title": "Acknowledged",
+            "type": "boolean"
+          },
+          "acknowledged_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Acknowledged At"
+          },
+          "acknowledged_by": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Acknowledged By"
+          },
+          "cleared_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cleared At"
+          },
+          "comparison": {
+            "title": "Comparison",
+            "type": "string"
+          },
+          "condition_active": {
+            "title": "Condition Active",
+            "type": "boolean"
+          },
+          "equipment_code": {
+            "title": "Equipment Code",
+            "type": "string"
+          },
+          "equipment_name": {
+            "title": "Equipment Name",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/AlarmKind"
+          },
+          "last_value": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Value"
+          },
+          "last_value_ts": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Value Ts"
+          },
+          "measurement": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Measurement"
+          },
+          "message": {
+            "title": "Message",
+            "type": "string"
+          },
+          "occurrence_count": {
+            "title": "Occurrence Count",
+            "type": "integer"
+          },
+          "raised_at": {
+            "format": "date-time",
+            "title": "Raised At",
+            "type": "string"
+          },
+          "rule": {
+            "$ref": "#/components/schemas/RuleRef"
+          },
+          "severity": {
+            "$ref": "#/components/schemas/Severity"
+          },
+          "state": {
+            "$ref": "#/components/schemas/AlarmState"
+          },
+          "threshold": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Threshold"
+          },
+          "trigger_ts": {
+            "format": "date-time",
+            "title": "Trigger Ts",
+            "type": "string"
+          },
+          "trigger_value": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Trigger Value"
+          },
+          "unit": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Unit"
+          },
+          "vessel_code": {
+            "title": "Vessel Code",
+            "type": "string"
+          },
+          "vessel_name": {
+            "title": "Vessel Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "rule",
+          "kind",
+          "severity",
+          "state",
+          "condition_active",
+          "acknowledged",
+          "vessel_code",
+          "vessel_name",
+          "equipment_code",
+          "equipment_name",
+          "measurement",
+          "unit",
+          "message",
+          "comparison",
+          "threshold",
+          "trigger_value",
+          "trigger_ts",
+          "last_value",
+          "last_value_ts",
+          "raised_at",
+          "cleared_at",
+          "acknowledged_at",
+          "acknowledged_by",
+          "occurrence_count"
+        ],
+        "title": "AlarmOut",
+        "type": "object"
+      },
+      "AlarmRuleOut": {
+        "properties": {
+          "activate_after_s": {
+            "title": "Activate After S",
+            "type": "number"
+          },
+          "clear_after_s": {
+            "title": "Clear After S",
+            "type": "number"
+          },
+          "clear_threshold": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Clear Threshold"
+          },
+          "code": {
+            "title": "Code",
+            "type": "string"
+          },
+          "comparison": {
+            "title": "Comparison",
+            "type": "string"
+          },
+          "description": {
+            "title": "Description",
+            "type": "string"
+          },
+          "enabled": {
+            "title": "Enabled",
+            "type": "boolean"
+          },
+          "equipment_type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Equipment Type"
+          },
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/AlarmKind"
+          },
+          "measurement_key": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Measurement Key"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "severity": {
+            "$ref": "#/components/schemas/Severity"
+          },
+          "threshold": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Threshold"
+          }
+        },
+        "required": [
+          "id",
+          "code",
+          "name",
+          "description",
+          "kind",
+          "equipment_type",
+          "measurement_key",
+          "comparison",
+          "threshold",
+          "clear_threshold",
+          "activate_after_s",
+          "clear_after_s",
+          "severity",
+          "enabled"
+        ],
+        "title": "AlarmRuleOut",
+        "type": "object"
+      },
+      "AlarmState": {
+        "enum": [
+          "active_unacknowledged",
+          "active_acknowledged",
+          "cleared_unacknowledged",
+          "cleared"
+        ],
+        "title": "AlarmState",
+        "type": "string"
+      },
+      "Communication": {
+        "enum": [
+          "online",
+          "degraded",
+          "offline"
+        ],
+        "title": "Communication",
+        "type": "string"
+      },
+      "DataGap": {
+        "properties": {
+          "from": {
+            "format": "date-time",
+            "title": "From",
+            "type": "string"
+          },
+          "measurement": {
+            "title": "Measurement",
+            "type": "string"
+          },
+          "seconds": {
+            "title": "Seconds",
+            "type": "number"
+          },
+          "to": {
+            "format": "date-time",
+            "title": "To",
+            "type": "string"
+          }
+        },
+        "required": [
+          "measurement",
+          "from",
+          "to",
+          "seconds"
+        ],
+        "title": "DataGap",
+        "type": "object"
+      },
+      "EquipmentDetail": {
+        "properties": {
+          "code": {
+            "title": "Code",
+            "type": "string"
+          },
+          "communication": {
+            "$ref": "#/components/schemas/Communication"
+          },
+          "health": {
+            "$ref": "#/components/schemas/Health"
+          },
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "last_data_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Data At"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "open_alarms": {
+            "title": "Open Alarms",
+            "type": "integer"
+          },
+          "readings": {
+            "items": {
+              "$ref": "#/components/schemas/LatestReading"
+            },
+            "title": "Readings",
+            "type": "array"
+          },
+          "sensor_health": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sensor Health"
+          },
+          "state": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "State"
+          },
+          "state_since": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "State Since"
+          },
+          "type": {
+            "title": "Type",
+            "type": "string"
+          },
+          "unacknowledged_alarms": {
+            "title": "Unacknowledged Alarms",
+            "type": "integer"
+          },
+          "vessel_code": {
+            "title": "Vessel Code",
+            "type": "string"
+          },
+          "vessel_name": {
+            "title": "Vessel Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "code",
+          "name",
+          "type",
+          "state",
+          "state_since",
+          "sensor_health",
+          "health",
+          "communication",
+          "open_alarms",
+          "unacknowledged_alarms",
+          "last_data_at",
+          "vessel_code",
+          "vessel_name",
+          "readings"
+        ],
+        "title": "EquipmentDetail",
+        "type": "object"
+      },
+      "FleetSummary": {
+        "properties": {
+          "active_scenarios": {
+            "title": "Active Scenarios",
+            "type": "integer"
+          },
+          "communication": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "title": "Communication",
+            "type": "object"
+          },
+          "equipment_by_health": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "title": "Equipment By Health",
+            "type": "object"
+          },
+          "equipment_total": {
+            "title": "Equipment Total",
+            "type": "integer"
+          },
+          "last_data_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Data At"
+          },
+          "opcua_state": {
+            "title": "Opcua State",
+            "type": "string"
+          },
+          "open_alarms": {
+            "$ref": "#/components/schemas/AlarmCounts"
+          },
+          "vessels_by_health": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "title": "Vessels By Health",
+            "type": "object"
+          },
+          "vessels_total": {
+            "title": "Vessels Total",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "vessels_total",
+          "vessels_by_health",
+          "equipment_total",
+          "equipment_by_health",
+          "communication",
+          "open_alarms",
+          "opcua_state",
+          "last_data_at",
+          "active_scenarios"
+        ],
+        "title": "FleetSummary",
+        "type": "object"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail",
+            "type": "array"
+          }
+        },
+        "title": "HTTPValidationError",
+        "type": "object"
+      },
+      "Health": {
+        "enum": [
+          "normal",
+          "warning",
+          "critical",
+          "offline"
+        ],
+        "title": "Health",
+        "type": "string"
+      },
+      "HealthResponse": {
+        "properties": {
+          "checks": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "title": "Checks",
+            "type": "object"
+          },
+          "status": {
+            "enum": [
+              "ok",
+              "ready",
+              "not_ready"
+            ],
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "status"
+        ],
+        "title": "HealthResponse",
+        "type": "object"
+      },
+      "HistoryBucket": {
+        "properties": {
+          "avg": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Avg"
+          },
+          "max": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Max"
+          },
+          "measurement": {
+            "title": "Measurement",
+            "type": "string"
+          },
+          "min": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Min"
+          },
+          "samples": {
+            "title": "Samples",
+            "type": "integer"
+          },
+          "ts": {
+            "format": "date-time",
+            "title": "Ts",
+            "type": "string"
+          }
+        },
+        "required": [
+          "ts",
+          "measurement",
+          "avg",
+          "min",
+          "max",
+          "samples"
+        ],
+        "title": "HistoryBucket",
+        "type": "object"
+      },
+      "HistoryPoint": {
+        "properties": {
+          "measurement": {
+            "title": "Measurement",
+            "type": "string"
+          },
+          "quality": {
+            "$ref": "#/components/schemas/Quality"
+          },
+          "ts": {
+            "format": "date-time",
+            "title": "Ts",
+            "type": "string"
+          },
+          "value": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Value"
+          }
+        },
+        "required": [
+          "ts",
+          "measurement",
+          "value",
+          "quality"
+        ],
+        "title": "HistoryPoint",
+        "type": "object"
+      },
+      "HistoryResponse": {
+        "properties": {
+          "bucket_s": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bucket S"
+          },
+          "buckets": {
+            "items": {
+              "$ref": "#/components/schemas/HistoryBucket"
+            },
+            "title": "Buckets",
+            "type": "array"
+          },
+          "equipment_code": {
+            "title": "Equipment Code",
+            "type": "string"
+          },
+          "from": {
+            "format": "date-time",
+            "title": "From",
+            "type": "string"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/HistoryPoint"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "next_cursor": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Cursor"
+          },
+          "to": {
+            "format": "date-time",
+            "title": "To",
+            "type": "string"
+          },
+          "truncated": {
+            "title": "Truncated",
+            "type": "boolean"
+          },
+          "units": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "title": "Units",
+            "type": "object"
+          },
+          "vessel_code": {
+            "title": "Vessel Code",
+            "type": "string"
+          }
+        },
+        "required": [
+          "vessel_code",
+          "equipment_code",
+          "from",
+          "to",
+          "bucket_s",
+          "units",
+          "items",
+          "buckets",
+          "next_cursor",
+          "truncated"
+        ],
+        "title": "HistoryResponse",
+        "type": "object"
+      },
+      "IncidentWindow": {
+        "properties": {
+          "alarm_events": {
+            "items": {
+              "$ref": "#/components/schemas/AlarmEventOut"
+            },
+            "title": "Alarm Events",
+            "type": "array"
+          },
+          "alarms": {
+            "items": {
+              "$ref": "#/components/schemas/AlarmOut"
+            },
+            "title": "Alarms",
+            "type": "array"
+          },
+          "equipment_code": {
+            "title": "Equipment Code",
+            "type": "string"
+          },
+          "equipment_name": {
+            "title": "Equipment Name",
+            "type": "string"
+          },
+          "first_ts": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "First Ts"
+          },
+          "focus_alarm_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Focus Alarm Id"
+          },
+          "from": {
+            "format": "date-time",
+            "title": "From",
+            "type": "string"
+          },
+          "gaps": {
+            "items": {
+              "$ref": "#/components/schemas/DataGap"
+            },
+            "title": "Gaps",
+            "type": "array"
+          },
+          "last_ts": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Ts"
+          },
+          "point_count": {
+            "title": "Point Count",
+            "type": "integer"
+          },
+          "series": {
+            "items": {
+              "$ref": "#/components/schemas/SeriesOut"
+            },
+            "title": "Series",
+            "type": "array"
+          },
+          "state_at_start": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "State At Start"
+          },
+          "state_changes": {
+            "items": {
+              "$ref": "#/components/schemas/StatePoint"
+            },
+            "title": "State Changes",
+            "type": "array"
+          },
+          "to": {
+            "format": "date-time",
+            "title": "To",
+            "type": "string"
+          },
+          "vessel_code": {
+            "title": "Vessel Code",
+            "type": "string"
+          },
+          "vessel_name": {
+            "title": "Vessel Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "vessel_code",
+          "vessel_name",
+          "equipment_code",
+          "equipment_name",
+          "from",
+          "to",
+          "series",
+          "state_changes",
+          "state_at_start",
+          "alarm_events",
+          "alarms",
+          "gaps",
+          "point_count",
+          "first_ts",
+          "last_ts"
+        ],
+        "title": "IncidentWindow",
+        "type": "object"
+      },
+      "IngestionStats": {
+        "properties": {
+          "accepted": {
+            "title": "Accepted",
+            "type": "integer"
+          },
+          "bad": {
+            "title": "Bad",
+            "type": "integer"
+          },
+          "db_failures": {
+            "title": "Db Failures",
+            "type": "integer"
+          },
+          "dropped": {
+            "title": "Dropped",
+            "type": "integer"
+          },
+          "duplicates": {
+            "title": "Duplicates",
+            "type": "integer"
+          },
+          "invalid": {
+            "title": "Invalid",
+            "type": "integer"
+          },
+          "last_batch_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Batch At"
+          },
+          "late": {
+            "title": "Late",
+            "type": "integer"
+          },
+          "queue_depth": {
+            "title": "Queue Depth",
+            "type": "integer"
+          },
+          "received": {
+            "title": "Received",
+            "type": "integer"
+          },
+          "rejected_timestamp": {
+            "title": "Rejected Timestamp",
+            "type": "integer"
+          },
+          "stuck": {
+            "title": "Stuck",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "queue_depth",
+          "received",
+          "accepted",
+          "duplicates",
+          "late",
+          "invalid",
+          "bad",
+          "stuck",
+          "dropped",
+          "rejected_timestamp",
+          "db_failures",
+          "last_batch_at"
+        ],
+        "title": "IngestionStats",
+        "type": "object"
+      },
+      "LatestReading": {
+        "properties": {
+          "age_s": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Age S"
+          },
+          "equipment_code": {
+            "title": "Equipment Code",
+            "type": "string"
+          },
+          "ingested_ts": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Time the backend stored the value",
+            "title": "Ingested Ts"
+          },
+          "measurement": {
+            "title": "Measurement",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "nominal_max": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Nominal Max"
+          },
+          "nominal_min": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Nominal Min"
+          },
+          "quality": {
+            "$ref": "#/components/schemas/Quality",
+            "description": "'stale' is derived when the reading is older than stale_after_s"
+          },
+          "sensor_id": {
+            "title": "Sensor Id",
+            "type": "integer"
+          },
+          "source_ts": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Time the source measured the value",
+            "title": "Source Ts"
+          },
+          "stale": {
+            "title": "Stale",
+            "type": "boolean"
+          },
+          "unit": {
+            "title": "Unit",
+            "type": "string"
+          },
+          "value": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Value"
+          },
+          "vessel_code": {
+            "title": "Vessel Code",
+            "type": "string"
+          }
+        },
+        "required": [
+          "sensor_id",
+          "vessel_code",
+          "equipment_code",
+          "measurement",
+          "name",
+          "unit",
+          "value",
+          "quality",
+          "source_ts",
+          "ingested_ts",
+          "age_s",
+          "stale",
+          "nominal_min",
+          "nominal_max"
+        ],
+        "title": "LatestReading",
+        "type": "object"
+      },
+      "LoginRequest": {
+        "properties": {
+          "password": {
+            "maxLength": 256,
+            "minLength": 1,
+            "title": "Password",
+            "type": "string"
+          },
+          "username": {
+            "maxLength": 64,
+            "minLength": 1,
+            "title": "Username",
+            "type": "string"
+          }
+        },
+        "required": [
+          "username",
+          "password"
+        ],
+        "title": "LoginRequest",
+        "type": "object"
+      },
+      "OpcUaStatus": {
+        "properties": {
+          "endpoint": {
+            "title": "Endpoint",
+            "type": "string"
+          },
+          "heartbeat": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Heartbeat"
+          },
+          "last_connected_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Connected At"
+          },
+          "last_data_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Backend time of the last accepted telemetry sample",
+            "title": "Last Data At"
+          },
+          "last_disconnected_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Disconnected At"
+          },
+          "last_error": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Error"
+          },
+          "monitored_items": {
+            "title": "Monitored Items",
+            "type": "integer"
+          },
+          "reconnect_attempts": {
+            "title": "Reconnect Attempts",
+            "type": "integer"
+          },
+          "security": {
+            "enum": [
+              "none",
+              "secure"
+            ],
+            "title": "Security",
+            "type": "string"
+          },
+          "state": {
+            "enum": [
+              "disabled",
+              "connecting",
+              "connected",
+              "disconnected",
+              "backoff",
+              "stopped"
+            ],
+            "title": "State",
+            "type": "string"
+          }
+        },
+        "required": [
+          "state",
+          "endpoint",
+          "security",
+          "last_connected_at",
+          "last_disconnected_at",
+          "last_data_at",
+          "reconnect_attempts",
+          "monitored_items",
+          "heartbeat",
+          "last_error"
+        ],
+        "title": "OpcUaStatus",
+        "type": "object"
+      },
+      "Quality": {
+        "enum": [
+          "good",
+          "uncertain",
+          "bad",
+          "invalid",
+          "stuck",
+          "stale"
+        ],
+        "title": "Quality",
+        "type": "string"
+      },
+      "RecentEvent": {
+        "properties": {
+          "alarm_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Alarm Id"
+          },
+          "at": {
+            "format": "date-time",
+            "title": "At",
+            "type": "string"
+          },
+          "equipment_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Equipment Code"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "message": {
+            "title": "Message",
+            "type": "string"
+          },
+          "severity": {
+            "$ref": "#/components/schemas/Severity"
+          },
+          "type": {
+            "enum": [
+              "alarm",
+              "scenario",
+              "system"
+            ],
+            "title": "Type",
+            "type": "string"
+          },
+          "vessel_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Vessel Code"
+          }
+        },
+        "required": [
+          "id",
+          "type",
+          "at",
+          "severity",
+          "vessel_code",
+          "equipment_code",
+          "message"
+        ],
+        "title": "RecentEvent",
+        "type": "object"
+      },
+      "Role": {
+        "enum": [
+          "viewer",
+          "operator"
+        ],
+        "title": "Role",
+        "type": "string"
+      },
+      "RuleRef": {
+        "properties": {
+          "code": {
+            "title": "Code",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "code",
+          "name"
+        ],
+        "title": "RuleRef",
+        "type": "object"
+      },
+      "ScenarioCommand": {
+        "properties": {
+          "duration_s": {
+            "anyOf": [
+              {
+                "maximum": 3600.0,
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Duration S"
+          },
+          "vessel_code": {
+            "anyOf": [
+              {
+                "maxLength": 32,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Vessel Code"
+          }
+        },
+        "title": "ScenarioCommand",
+        "type": "object"
+      },
+      "ScenarioInfo": {
+        "properties": {
+          "category": {
+            "enum": [
+              "equipment",
+              "sensor",
+              "communication"
+            ],
+            "title": "Category",
+            "type": "string"
+          },
+          "default_duration_s": {
+            "title": "Default Duration S",
+            "type": "integer"
+          },
+          "description": {
+            "title": "Description",
+            "type": "string"
+          },
+          "expected_alarms": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Expected Alarms",
+            "type": "array"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "max_duration_s": {
+            "title": "Max Duration S",
+            "type": "integer"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "scope": {
+            "enum": [
+              "vessel",
+              "server"
+            ],
+            "title": "Scope",
+            "type": "string"
+          },
+          "target": {
+            "title": "Target",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "description",
+          "category",
+          "target",
+          "scope",
+          "default_duration_s",
+          "max_duration_s",
+          "expected_alarms"
+        ],
+        "title": "ScenarioInfo",
+        "type": "object"
+      },
+      "ScenarioResult": {
+        "properties": {
+          "accepted": {
+            "title": "Accepted",
+            "type": "boolean"
+          },
+          "message": {
+            "title": "Message",
+            "type": "string"
+          },
+          "simulator": {
+            "$ref": "#/components/schemas/SimulatorStatus"
+          }
+        },
+        "required": [
+          "accepted",
+          "message",
+          "simulator"
+        ],
+        "title": "ScenarioResult",
+        "type": "object"
+      },
+      "SeriesOut": {
+        "properties": {
+          "measurement": {
+            "title": "Measurement",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "nominal_max": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Nominal Max"
+          },
+          "nominal_min": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Nominal Min"
+          },
+          "points": {
+            "items": {
+              "$ref": "#/components/schemas/SeriesPoint"
+            },
+            "title": "Points",
+            "type": "array"
+          },
+          "truncated": {
+            "title": "Truncated",
+            "type": "boolean"
+          },
+          "unit": {
+            "title": "Unit",
+            "type": "string"
+          }
+        },
+        "required": [
+          "measurement",
+          "name",
+          "unit",
+          "nominal_min",
+          "nominal_max",
+          "points",
+          "truncated"
+        ],
+        "title": "SeriesOut",
+        "type": "object"
+      },
+      "SeriesPoint": {
+        "properties": {
+          "quality": {
+            "$ref": "#/components/schemas/Quality"
+          },
+          "ts": {
+            "format": "date-time",
+            "title": "Ts",
+            "type": "string"
+          },
+          "value": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Value"
+          }
+        },
+        "required": [
+          "ts",
+          "value",
+          "quality"
+        ],
+        "title": "SeriesPoint",
+        "type": "object"
+      },
+      "Severity": {
+        "enum": [
+          "info",
+          "warning",
+          "critical"
+        ],
+        "title": "Severity",
+        "type": "string"
+      },
+      "SimulatorEventOut": {
+        "properties": {
+          "action": {
+            "title": "Action",
+            "type": "string"
+          },
+          "actor": {
+            "title": "Actor",
+            "type": "string"
+          },
+          "at": {
+            "format": "date-time",
+            "title": "At",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "message": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Message"
+          },
+          "params": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Params"
+          },
+          "result": {
+            "title": "Result",
+            "type": "string"
+          },
+          "scenario_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Scenario Id"
+          },
+          "vessel_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Vessel Code"
+          }
+        },
+        "required": [
+          "id",
+          "at",
+          "actor",
+          "action",
+          "scenario_id",
+          "vessel_code",
+          "params",
+          "result",
+          "message"
+        ],
+        "title": "SimulatorEventOut",
+        "type": "object"
+      },
+      "SimulatorStatus": {
+        "properties": {
+          "active_scenarios": {
+            "items": {
+              "$ref": "#/components/schemas/ActiveScenario"
+            },
+            "title": "Active Scenarios",
+            "type": "array"
+          },
+          "connected": {
+            "title": "Connected",
+            "type": "boolean"
+          },
+          "endpoint": {
+            "title": "Endpoint",
+            "type": "string"
+          },
+          "heartbeat": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Heartbeat"
+          },
+          "heartbeat_age_s": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Heartbeat Age S"
+          },
+          "notice": {
+            "title": "Notice",
+            "type": "string"
+          },
+          "opcua_state": {
+            "title": "Opcua State",
+            "type": "string"
+          },
+          "security": {
+            "title": "Security",
+            "type": "string"
+          }
+        },
+        "required": [
+          "connected",
+          "opcua_state",
+          "endpoint",
+          "security",
+          "heartbeat",
+          "heartbeat_age_s",
+          "active_scenarios",
+          "notice"
+        ],
+        "title": "SimulatorStatus",
+        "type": "object"
+      },
+      "StatePoint": {
+        "properties": {
+          "state": {
+            "title": "State",
+            "type": "string"
+          },
+          "ts": {
+            "format": "date-time",
+            "title": "Ts",
+            "type": "string"
+          }
+        },
+        "required": [
+          "ts",
+          "state"
+        ],
+        "title": "StatePoint",
+        "type": "object"
+      },
+      "SystemStatus": {
+        "properties": {
+          "database": {
+            "enum": [
+              "ok",
+              "unavailable"
+            ],
+            "title": "Database",
+            "type": "string"
+          },
+          "disclaimer": {
+            "title": "Disclaimer",
+            "type": "string"
+          },
+          "environment": {
+            "title": "Environment",
+            "type": "string"
+          },
+          "ingestion": {
+            "$ref": "#/components/schemas/IngestionStats"
+          },
+          "opcua": {
+            "$ref": "#/components/schemas/OpcUaStatus"
+          },
+          "server_time": {
+            "format": "date-time",
+            "title": "Server Time",
+            "type": "string"
+          },
+          "simulated": {
+            "const": true,
+            "default": true,
+            "title": "Simulated",
+            "type": "boolean"
+          },
+          "stale_after_s": {
+            "title": "Stale After S",
+            "type": "number"
+          },
+          "version": {
+            "title": "Version",
+            "type": "string"
+          },
+          "websocket_clients": {
+            "title": "Websocket Clients",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "version",
+          "environment",
+          "server_time",
+          "disclaimer",
+          "database",
+          "opcua",
+          "ingestion",
+          "websocket_clients",
+          "stale_after_s"
+        ],
+        "title": "SystemStatus",
+        "type": "object"
+      },
+      "TokenResponse": {
+        "properties": {
+          "access_token": {
+            "title": "Access Token",
+            "type": "string"
+          },
+          "expires_at": {
+            "format": "date-time",
+            "title": "Expires At",
+            "type": "string"
+          },
+          "token_type": {
+            "const": "bearer",
+            "default": "bearer",
+            "title": "Token Type",
+            "type": "string"
+          },
+          "user": {
+            "$ref": "#/components/schemas/UserOut"
+          }
+        },
+        "required": [
+          "access_token",
+          "expires_at",
+          "user"
+        ],
+        "title": "TokenResponse",
+        "type": "object"
+      },
+      "UserOut": {
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "role": {
+            "$ref": "#/components/schemas/Role"
+          },
+          "username": {
+            "title": "Username",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "username",
+          "role"
+        ],
+        "title": "UserOut",
+        "type": "object"
+      },
+      "ValidationError": {
+        "properties": {
+          "ctx": {
+            "title": "Context",
+            "type": "object"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "title": "Location",
+            "type": "array"
+          },
+          "msg": {
+            "title": "Message",
+            "type": "string"
+          },
+          "type": {
+            "title": "Error Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError",
+        "type": "object"
+      },
+      "VesselDetail": {
+        "properties": {
+          "code": {
+            "title": "Code",
+            "type": "string"
+          },
+          "communication": {
+            "$ref": "#/components/schemas/Communication"
+          },
+          "equipment": {
+            "items": {
+              "$ref": "#/components/schemas/EquipmentDetail"
+            },
+            "title": "Equipment",
+            "type": "array"
+          },
+          "equipment_count": {
+            "title": "Equipment Count",
+            "type": "integer"
+          },
+          "health": {
+            "$ref": "#/components/schemas/Health"
+          },
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "last_data_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Data At"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "open_alarms": {
+            "$ref": "#/components/schemas/AlarmCounts"
+          },
+          "simulated": {
+            "const": true,
+            "default": true,
+            "title": "Simulated",
+            "type": "boolean"
+          },
+          "vessel_type": {
+            "title": "Vessel Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "code",
+          "name",
+          "vessel_type",
+          "health",
+          "communication",
+          "equipment_count",
+          "open_alarms",
+          "last_data_at",
+          "equipment"
+        ],
+        "title": "VesselDetail",
+        "type": "object"
+      },
+      "VesselSummary": {
+        "properties": {
+          "code": {
+            "title": "Code",
+            "type": "string"
+          },
+          "communication": {
+            "$ref": "#/components/schemas/Communication"
+          },
+          "equipment_count": {
+            "title": "Equipment Count",
+            "type": "integer"
+          },
+          "health": {
+            "$ref": "#/components/schemas/Health"
+          },
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "last_data_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Data At"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "open_alarms": {
+            "$ref": "#/components/schemas/AlarmCounts"
+          },
+          "simulated": {
+            "const": true,
+            "default": true,
+            "title": "Simulated",
+            "type": "boolean"
+          },
+          "vessel_type": {
+            "title": "Vessel Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "code",
+          "name",
+          "vessel_type",
+          "health",
+          "communication",
+          "equipment_count",
+          "open_alarms",
+          "last_data_at"
+        ],
+        "title": "VesselSummary",
+        "type": "object"
+      }
+    },
+    "securitySchemes": {
+      "HTTPBearer": {
+        "scheme": "bearer",
+        "type": "http"
+      }
+    }
+  },
+  "info": {
+    "description": "Maritime automation monitoring & incident replay \u2014 **simulated** vessels and telemetry. Independent portfolio project; not certified maritime software and not affiliated with or endorsed by NACOS Marine.",
+    "title": "SeaTrace API",
+    "version": "1.0.0"
+  },
+  "openapi": "3.1.0",
+  "paths": {
+    "/api/v1/alarm-rules": {
+      "get": {
+        "operationId": "alarm_rules_api_v1_alarm_rules_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/AlarmRuleOut"
+                  },
+                  "title": "Response Alarm Rules Api V1 Alarm Rules Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Configured alarm rules (read-only)",
+        "tags": [
+          "alarms"
+        ]
+      }
+    },
+    "/api/v1/alarms": {
+      "get": {
+        "operationId": "list_alarms_api_v1_alarms_get",
+        "parameters": [
+          {
+            "description": "Repeatable lifecycle-state filter",
+            "in": "query",
+            "name": "state",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "items": {
+                    "$ref": "#/components/schemas/AlarmState"
+                  },
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Repeatable lifecycle-state filter",
+              "title": "State"
+            }
+          },
+          {
+            "description": "true = not closed; false = closed (cleared & acknowledged)",
+            "in": "query",
+            "name": "open",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "true = not closed; false = closed (cleared & acknowledged)",
+              "title": "Open"
+            }
+          },
+          {
+            "in": "query",
+            "name": "severity",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "items": {
+                    "$ref": "#/components/schemas/Severity"
+                  },
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Severity"
+            }
+          },
+          {
+            "in": "query",
+            "name": "vessel",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Vessel"
+            }
+          },
+          {
+            "in": "query",
+            "name": "equipment",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Equipment"
+            }
+          },
+          {
+            "in": "query",
+            "name": "kind",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/AlarmKind"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Kind"
+            }
+          },
+          {
+            "description": "raised_at >= from",
+            "in": "query",
+            "name": "from",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "date-time",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "raised_at >= from",
+              "title": "From"
+            }
+          },
+          {
+            "description": "raised_at <= to",
+            "in": "query",
+            "name": "to",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "date-time",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "raised_at <= to",
+              "title": "To"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 50,
+              "maximum": 500,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "offset",
+            "required": false,
+            "schema": {
+              "default": 0,
+              "minimum": 0,
+              "title": "Offset",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AlarmList"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "List alarms (active and historical)",
+        "tags": [
+          "alarms"
+        ]
+      }
+    },
+    "/api/v1/alarms/{alarm_id}": {
+      "get": {
+        "operationId": "get_alarm_api_v1_alarms__alarm_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "alarm_id",
+            "required": true,
+            "schema": {
+              "title": "Alarm Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AlarmDetail"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Alarm details with transition history",
+        "tags": [
+          "alarms"
+        ]
+      }
+    },
+    "/api/v1/alarms/{alarm_id}/acknowledge": {
+      "post": {
+        "operationId": "acknowledge_api_v1_alarms__alarm_id__acknowledge_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "alarm_id",
+            "required": true,
+            "schema": {
+              "title": "Alarm Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "anyOf": [
+                  {
+                    "$ref": "#/components/schemas/AcknowledgeRequest"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Body"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AlarmDetail"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Acknowledge an alarm (operator only)",
+        "tags": [
+          "alarms"
+        ]
+      }
+    },
+    "/api/v1/auth/login": {
+      "post": {
+        "operationId": "login_api_v1_auth_login_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Obtain an access token",
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/api/v1/auth/me": {
+      "get": {
+        "operationId": "me_api_v1_auth_me_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Current user",
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/api/v1/events/recent": {
+      "get": {
+        "operationId": "recent_events_api_v1_events_recent_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 30,
+              "maximum": 200,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/RecentEvent"
+                  },
+                  "title": "Response Recent Events Api V1 Events Recent Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Recent alarm, scenario and connectivity events",
+        "tags": [
+          "fleet"
+        ]
+      }
+    },
+    "/api/v1/fleet/summary": {
+      "get": {
+        "operationId": "fleet_summary_api_v1_fleet_summary_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FleetSummary"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Fleet-wide status summary",
+        "tags": [
+          "fleet"
+        ]
+      }
+    },
+    "/api/v1/health/live": {
+      "get": {
+        "operationId": "live_api_v1_health_live_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Liveness probe",
+        "tags": [
+          "system"
+        ]
+      }
+    },
+    "/api/v1/health/ready": {
+      "get": {
+        "operationId": "ready_api_v1_health_ready_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthResponse"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Readiness probe",
+        "tags": [
+          "system"
+        ]
+      }
+    },
+    "/api/v1/incidents/alarm/{alarm_id}": {
+      "get": {
+        "operationId": "for_alarm_api_v1_incidents_alarm__alarm_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "alarm_id",
+            "required": true,
+            "schema": {
+              "title": "Alarm Id",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "before_s",
+            "required": false,
+            "schema": {
+              "default": 300,
+              "maximum": 3600,
+              "minimum": 0,
+              "title": "Before S",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "after_s",
+            "required": false,
+            "schema": {
+              "default": 300,
+              "maximum": 3600,
+              "minimum": 0,
+              "title": "After S",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IncidentWindow"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Incident window centred on an alarm",
+        "tags": [
+          "incidents"
+        ]
+      }
+    },
+    "/api/v1/incidents/window": {
+      "get": {
+        "operationId": "window_api_v1_incidents_window_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "vessel",
+            "required": true,
+            "schema": {
+              "title": "Vessel",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "equipment",
+            "required": true,
+            "schema": {
+              "title": "Equipment",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "from",
+            "required": true,
+            "schema": {
+              "format": "date-time",
+              "title": "From",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "to",
+            "required": true,
+            "schema": {
+              "format": "date-time",
+              "title": "To",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "measurement",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Measurement"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IncidentWindow"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Stored telemetry, states and alarm events for a time window",
+        "tags": [
+          "incidents"
+        ]
+      }
+    },
+    "/api/v1/simulator/events": {
+      "get": {
+        "operationId": "events_api_v1_simulator_events_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 50,
+              "maximum": 200,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/SimulatorEventOut"
+                  },
+                  "title": "Response Events Api V1 Simulator Events Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Audit trail of simulator commands",
+        "tags": [
+          "simulator"
+        ]
+      }
+    },
+    "/api/v1/simulator/reset": {
+      "post": {
+        "operationId": "reset_api_v1_simulator_reset_post",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScenarioResult"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Clear every active scenario (operator only)",
+        "tags": [
+          "simulator"
+        ]
+      }
+    },
+    "/api/v1/simulator/scenarios": {
+      "get": {
+        "operationId": "scenarios_api_v1_simulator_scenarios_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/ScenarioInfo"
+                  },
+                  "title": "Response Scenarios Api V1 Simulator Scenarios Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Available fault scenarios",
+        "tags": [
+          "simulator"
+        ]
+      }
+    },
+    "/api/v1/simulator/scenarios/{scenario_id}/activate": {
+      "post": {
+        "operationId": "activate_api_v1_simulator_scenarios__scenario_id__activate_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "scenario_id",
+            "required": true,
+            "schema": {
+              "title": "Scenario Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "anyOf": [
+                  {
+                    "$ref": "#/components/schemas/ScenarioCommand"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Body"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScenarioResult"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Activate a fault scenario (operator only)",
+        "tags": [
+          "simulator"
+        ]
+      }
+    },
+    "/api/v1/simulator/scenarios/{scenario_id}/clear": {
+      "post": {
+        "operationId": "clear_api_v1_simulator_scenarios__scenario_id__clear_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "scenario_id",
+            "required": true,
+            "schema": {
+              "title": "Scenario Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "anyOf": [
+                  {
+                    "$ref": "#/components/schemas/ScenarioCommand"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Body"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScenarioResult"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Clear a fault scenario (operator only)",
+        "tags": [
+          "simulator"
+        ]
+      }
+    },
+    "/api/v1/simulator/status": {
+      "get": {
+        "operationId": "status_api_v1_simulator_status_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SimulatorStatus"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Simulator / OPC UA connection and active scenarios",
+        "tags": [
+          "simulator"
+        ]
+      }
+    },
+    "/api/v1/system/status": {
+      "get": {
+        "operationId": "system_status_api_v1_system_status_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SystemStatus"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "System and source-connectivity status",
+        "tags": [
+          "system"
+        ]
+      }
+    },
+    "/api/v1/telemetry/history": {
+      "get": {
+        "operationId": "history_api_v1_telemetry_history_get",
+        "parameters": [
+          {
+            "description": "Vessel code, e.g. VES-001",
+            "in": "query",
+            "name": "vessel",
+            "required": true,
+            "schema": {
+              "description": "Vessel code, e.g. VES-001",
+              "title": "Vessel",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Equipment code, e.g. ME1",
+            "in": "query",
+            "name": "equipment",
+            "required": true,
+            "schema": {
+              "description": "Equipment code, e.g. ME1",
+              "title": "Equipment",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Inclusive start (ISO-8601 with offset)",
+            "in": "query",
+            "name": "from",
+            "required": true,
+            "schema": {
+              "description": "Inclusive start (ISO-8601 with offset)",
+              "format": "date-time",
+              "title": "From",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Inclusive end (ISO-8601 with offset)",
+            "in": "query",
+            "name": "to",
+            "required": true,
+            "schema": {
+              "description": "Inclusive end (ISO-8601 with offset)",
+              "format": "date-time",
+              "title": "To",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Repeat to select several; default all",
+            "in": "query",
+            "name": "measurement",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Repeat to select several; default all",
+              "title": "Measurement"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 5000,
+              "maximum": 20000,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          },
+          {
+            "description": "next_cursor of the previous page",
+            "in": "query",
+            "name": "cursor",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "next_cursor of the previous page",
+              "title": "Cursor"
+            }
+          },
+          {
+            "description": "Aggregate into buckets of N s",
+            "in": "query",
+            "name": "bucket_s",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maximum": 86400,
+                  "minimum": 1,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Aggregate into buckets of N s",
+              "title": "Bucket S"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HistoryResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Stored telemetry for one equipment item and time range",
+        "tags": [
+          "telemetry"
+        ]
+      }
+    },
+    "/api/v1/telemetry/latest": {
+      "get": {
+        "operationId": "latest_api_v1_telemetry_latest_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "vessel",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Vessel"
+            }
+          },
+          {
+            "in": "query",
+            "name": "equipment",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Equipment"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/LatestReading"
+                  },
+                  "title": "Response Latest Api V1 Telemetry Latest Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Latest reading of every sensor (optionally filtered)",
+        "tags": [
+          "fleet"
+        ]
+      }
+    },
+    "/api/v1/vessels": {
+      "get": {
+        "operationId": "list_vessels_api_v1_vessels_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/VesselSummary"
+                  },
+                  "title": "Response List Vessels Api V1 Vessels Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "List vessels with status",
+        "tags": [
+          "fleet"
+        ]
+      }
+    },
+    "/api/v1/vessels/{vessel_code}": {
+      "get": {
+        "operationId": "get_vessel_api_v1_vessels__vessel_code__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "vessel_code",
+            "required": true,
+            "schema": {
+              "title": "Vessel Code",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VesselDetail"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Vessel with equipment, states and latest readings",
+        "tags": [
+          "fleet"
+        ]
+      }
+    },
+    "/api/v1/vessels/{vessel_code}/equipment/{equipment_code}": {
+      "get": {
+        "operationId": "get_equipment_api_v1_vessels__vessel_code__equipment__equipment_code__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "vessel_code",
+            "required": true,
+            "schema": {
+              "title": "Vessel Code",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "equipment_code",
+            "required": true,
+            "schema": {
+              "title": "Equipment Code",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EquipmentDetail"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "One equipment item with latest readings",
+        "tags": [
+          "fleet"
+        ]
+      }
+    }
+  }
+}
