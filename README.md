@@ -173,7 +173,7 @@ Manually: `cd backend && SEATRACE_DATABASE_URL=postgresql+asyncpg://… uv run a
 | Suite | Command | Result recorded during development |
 |---|---|---|
 | C++ simulator (unit + in-process OPC UA) | `cmake -S simulator -B simulator/build -G Ninja && cmake --build simulator/build && ctest --test-dir simulator/build` | **146 / 146 passed** (also 27 OPC UA tests under ASan/UBSan) |
-| Backend (unit, API, DB, migrations, OPC UA, WebSocket) + **integration with the real simulator** | `cd backend && uv run pytest` | BACKEND_RESULT |
+| Backend (unit, API, DB, migrations, OPC UA, WebSocket) + **integration with the real simulator** | `cd backend && uv run pytest` | **170 / 170 passed** (unit, API, DB, migrations, OPC UA, WebSocket + 8 integration tests against the real simulator), 95 % line coverage |
 | Backend static checks | `uv run ruff check app tests scripts && uv run ruff format --check app tests scripts migrations && uv run mypy` | clean (ruff, mypy `--strict`) |
 | Frontend | `cd frontend && npm ci && npm run lint && npm run typecheck && npm test && npm run build` | **278 / 278 tests**, lint/typecheck/format/build clean; coverage 93.6 % statements |
 | Browser e2e (Playwright, real Chromium) | `E2E_OPERATOR_PASSWORD=… E2E_VIEWER_PASSWORD=… BASE_URL=http://localhost:8080 npx playwright test` (in `frontend/`) | **5 / 5 passed** against the Docker Compose stack: login rules, live fleet, fault → alarm → acknowledge → audit → replay → clear, viewer restrictions |

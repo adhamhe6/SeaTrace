@@ -65,6 +65,17 @@ injection (`process_batch`, `alarms.tick(now)` with an explicit clock). Time-dep
 | Full path simulator → OPC UA → backend → PostgreSQL → API → alarm → ack → replay | integration `test_full_pipeline.py` (8 tests) and `scripts/smoke_test.py` |
 | UI reflects real measurement; alarm ack in UI; replay in UI | Playwright `frontend/e2e` against the running stack |
 
+## Recorded results (development run)
+
+| Suite | Result |
+|---|---|
+| Simulator `ctest` | 146 / 146 |
+| Backend `pytest` (incl. 8 integration tests with the real simulator) | 170 / 170, 95 % line coverage of `app/` |
+| Frontend `vitest` | 278 / 278 (93.6 % statements) |
+| Playwright e2e against the Docker Compose stack (via nginx) | 5 / 5 |
+| `scripts/smoke_test.py` against the Compose stack | `SMOKE OK` |
+| Manual resilience checks on the Compose stack | backend restart (alarms/history intact, OPC UA reconnect), `docker compose stop db` → API 503 / readiness 503 / liveness 200, recovery after `start db`; `opcua_outage` in secure mode → `backoff` → reconnected with exactly 38 monitored items |
+
 ## Known gaps
 * The Docker Compose workflow is exercised by the CI `compose` job and by manual runs; it is not part of the pytest suite.
 * Load/soak testing was not performed beyond multi-minute runs at 1 Hz × 20 sensors.
