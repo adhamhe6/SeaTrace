@@ -51,6 +51,8 @@ test.describe('operator incident workflow', () => {
   test('activate a fault, see the alarm, acknowledge it, inspect history, replay it and clear the scenario', async ({ page, request }) => {
     await login(page, operator());
     const token = await sessionToken(page);
+    // Start from a clean simulator (a previous aborted run may have left a scenario active).
+    await request.post('/api/v1/simulator/reset', { headers: { Authorization: `Bearer ${token}` } });
     const baseline = await highestAlarmId(request, token);
 
     // 1. Activate the scenario from the simulator page

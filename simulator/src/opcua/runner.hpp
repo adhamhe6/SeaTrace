@@ -29,7 +29,7 @@ class Runner {
   OpcUaServer& server_;
   Logger& logger_;
   std::chrono::milliseconds tick_;
-  std::chrono::steady_clock::time_point next_restart_attempt_{};
+  std::chrono::steady_clock::time_point next_restart_attempt_;
 };
 
 }  // namespace seatrace::sim::opcua

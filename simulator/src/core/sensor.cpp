@@ -4,7 +4,7 @@
 
 namespace seatrace::sim {
 
-Sensor::Sensor(MeasurementSpec spec, Rng rng) : spec_(std::move(spec)), rng_(std::move(rng)) {}
+Sensor::Sensor(MeasurementSpec spec, Rng rng) : spec_(std::move(spec)), rng_(rng) {}
 
 const Reading& Sensor::sample(double true_value, SensorFault fault, SimTime now) {
   const double noise = rng_.gaussian() * spec_.noise_sigma;

@@ -62,6 +62,7 @@ UA_StatusCode apply_security(UA_ServerConfig* config, SecurityMode mode,
   }
 
   std::vector<UA_ByteString> trust_list;
+  trust_list.reserve(material.trusted_clients.size());
   for (const Bytes& cert : material.trusted_clients) trust_list.push_back(view(cert));
   UA_StatusCode status = UA_CertificateVerification_Trustlist(
       &config->secureChannelPKI, trust_list.data(), trust_list.size(), nullptr, 0, nullptr, 0);

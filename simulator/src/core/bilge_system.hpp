@@ -11,7 +11,7 @@ namespace seatrace::sim {
 // States: STANDBY <-> PUMPING, and DEGRADED while the level keeps rising despite the pump.
 class BilgeSystem final : public Equipment {
  public:
-  BilgeSystem(const EquipmentConfig& config, std::string vessel_id, std::uint64_t seed);
+  BilgeSystem(const EquipmentConfig& config, const std::string& vessel_id, std::uint64_t seed);
 
   double true_value(std::string_view key) const override;
   double level_cm() const { return level_; }

@@ -144,8 +144,10 @@ std::vector<MeasurementSpec> parse_measurements(const json& equipment, Equipment
     const auto it = std::ranges::find(templates, name, &MeasurementTemplate::name);
     if (it == templates.end()) {
       std::string allowed;
-      for (const auto& t : templates)
-        allowed += (allowed.empty() ? "" : ", ") + std::string(t.name);
+      for (const auto& t : templates) {
+        if (!allowed.empty()) allowed += ", ";
+        allowed += t.name;
+      }
       fail(item_path, "unknown measurement '" + name + "' for " + std::string(to_string(type)) +
                           " (allowed: " + allowed + ")");
     }

@@ -13,7 +13,7 @@ namespace seatrace::sim {
 // States: STOPPED, RUNNING, DEGRADED (low pressure or high outlet temperature).
 class CoolingSystem final : public Equipment {
  public:
-  CoolingSystem(const EquipmentConfig& config, std::string vessel_id, std::uint64_t seed);
+  CoolingSystem(const EquipmentConfig& config, const std::string& vessel_id, std::uint64_t seed);
 
   double true_value(std::string_view key) const override;
   double effectiveness() const;

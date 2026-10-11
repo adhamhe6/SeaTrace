@@ -22,7 +22,8 @@ Generator::Params Generator::Params::from(const EquipmentConfig& config) {
           params.get("frequency_tau_s"),  params.get("overload_margin_pct")};
 }
 
-Generator::Generator(const EquipmentConfig& config, std::string vessel_id, std::uint64_t seed)
+Generator::Generator(const EquipmentConfig& config, const std::string& vessel_id,
+                     std::uint64_t seed)
     : Equipment(config, vessel_id, seed),
       p_(Params::from(config)),
       load_spec_(config.measurement("load")),

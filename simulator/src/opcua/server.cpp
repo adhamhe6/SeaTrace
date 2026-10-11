@@ -163,7 +163,8 @@ OpcUaServer::OpcUaServer(Simulation& simulation, Logger& logger, ServerOptions o
 OpcUaServer::~OpcUaServer() {
   try {
     stop();
-  } catch (...) {  // destructors must not throw; the deleter shuts the server down anyway
+  } catch (...) {  // NOLINT(bugprone-empty-catch): destructors must not throw; the deleter stops
+                   // the server anyway
   }
 }
 

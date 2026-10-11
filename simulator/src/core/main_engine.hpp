@@ -22,7 +22,7 @@ namespace seatrace::sim {
 //   STARTING
 class MainEngine final : public Equipment {
  public:
-  MainEngine(const EquipmentConfig& config, std::string vessel_id, std::uint64_t seed);
+  MainEngine(const EquipmentConfig& config, const std::string& vessel_id, std::uint64_t seed);
 
   double true_value(std::string_view key) const override;
 

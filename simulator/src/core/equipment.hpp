@@ -35,7 +35,7 @@ struct StateChange {
 // machine (advance), then samples every sensor from the true process values.
 class Equipment {
  public:
-  Equipment(const EquipmentConfig& config, std::string vessel_id, std::uint64_t seed);
+  Equipment(const EquipmentConfig& config, const std::string& vessel_id, std::uint64_t seed);
   virtual ~Equipment() = default;
   Equipment(const Equipment&) = delete;
   Equipment& operator=(const Equipment&) = delete;

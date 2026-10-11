@@ -26,7 +26,8 @@ BilgeSystem::Params BilgeSystem::Params::from(const EquipmentConfig& config) {
           params.get("max_level_cm")};
 }
 
-BilgeSystem::BilgeSystem(const EquipmentConfig& config, std::string vessel_id, std::uint64_t seed)
+BilgeSystem::BilgeSystem(const EquipmentConfig& config, const std::string& vessel_id,
+                         std::uint64_t seed)
     : Equipment(config, vessel_id, seed),
       p_(Params::from(config)),
       process_rng_(derive_seed(seed, vessel_id + "." + config.code + "#process")) {

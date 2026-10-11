@@ -40,7 +40,8 @@ MainEngine::Params MainEngine::Params::from(const EquipmentConfig& config) {
           params.get("load_phase_rad"),     params.get("load_noise_pct")};
 }
 
-MainEngine::MainEngine(const EquipmentConfig& config, std::string vessel_id, std::uint64_t seed)
+MainEngine::MainEngine(const EquipmentConfig& config, const std::string& vessel_id,
+                       std::uint64_t seed)
     : Equipment(config, vessel_id, seed),
       p_(Params::from(config)),
       rpm_spec_(config.measurement("rpm")),

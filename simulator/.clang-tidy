@@ -2,6 +2,7 @@ Checks: >
   bugprone-*,
   -bugprone-easily-swappable-parameters,
   -bugprone-exception-escape,
+  -performance-enum-size,
   performance-*,
   modernize-use-nullptr,
   modernize-use-override,

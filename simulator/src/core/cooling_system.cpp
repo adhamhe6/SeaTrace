@@ -27,7 +27,7 @@ CoolingSystem::Params CoolingSystem::Params::from(const EquipmentConfig& config)
           params.get("wobble_period_s")};
 }
 
-CoolingSystem::CoolingSystem(const EquipmentConfig& config, std::string vessel_id,
+CoolingSystem::CoolingSystem(const EquipmentConfig& config, const std::string& vessel_id,
                              std::uint64_t seed)
     : Equipment(config, vessel_id, seed),
       p_(Params::from(config)),

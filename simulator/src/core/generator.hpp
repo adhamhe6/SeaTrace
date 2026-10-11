@@ -11,7 +11,7 @@ namespace seatrace::sim {
 // States: STOPPED -> STARTING -> RUNNING <-> DEGRADED (overload).
 class Generator final : public Equipment {
  public:
-  Generator(const EquipmentConfig& config, std::string vessel_id, std::uint64_t seed);
+  Generator(const EquipmentConfig& config, const std::string& vessel_id, std::uint64_t seed);
 
   double true_value(std::string_view key) const override;
   double load_pct() const { return load_; }
