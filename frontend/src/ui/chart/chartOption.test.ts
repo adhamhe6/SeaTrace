@@ -129,7 +129,7 @@ describe('buildChartOption', () => {
     expect(areas).toHaveLength(2);
     expect(areas[0]![0]!.yAxis).toBe(78);
     expect(areas[1]![0]!.xAxis).toBe(2000);
-    const line = o.series[0]!.markLine.data[0];
+    const line = o.series[0]!.markLine.data[0]!;
     expect(line).toMatchObject({ xAxis: 1500, lineStyle: { type: 'solid' } });
     expect(line.label.show).toBe(true);
   });
@@ -137,7 +137,7 @@ describe('buildChartOption', () => {
     const o = build(
       spec({ markers: [{ x: 1, name: 'a', label: 'L', color: '#f00' }], xLabels: false }),
     );
-    expect(o.series[0]!.markLine.data[0].label.show).toBe(false);
+    expect(o.series[0]!.markLine.data[0]!.label.show).toBe(false);
     expect(o.xAxis.axisLabel.show).toBe(false);
   });
   it('creates a host series for marker-only charts and a scatter layer for flagged points', () => {

@@ -377,7 +377,7 @@ describe('Simulator controls', () => {
       const activate = c.getByRole('button', { name: 'Activate Engine overheating' });
       await user.hover(activate);
       expect(
-        await within(activate.closest('.st-tip') as HTMLElement).findByRole('tooltip'),
+        await within(activate.closest('.st-tip')!).findByRole('tooltip'),
       ).toHaveTextContent('Operator role required');
     });
   });

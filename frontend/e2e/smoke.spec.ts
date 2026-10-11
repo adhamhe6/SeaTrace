@@ -4,7 +4,7 @@ import { listAlarms, login, operator, sessionToken, viewer } from './helpers';
 const SCENARIO_NAME = 'Engine overheating';
 const VESSEL = 'VES-001';
 
-async function scenarioCard(page: Page, name: string) {
+function scenarioCard(page: Page, name: string) {
   return page.getByRole('heading', { name, level: 3 }).locator('xpath=ancestor::section[1]');
 }
 
@@ -80,7 +80,7 @@ test.describe('operator incident workflow', () => {
 
     // 1. Activate the scenario from the simulator page
     await page.goto('/simulator');
-    const card = await scenarioCard(page, SCENARIO_NAME);
+    const card = scenarioCard(page, SCENARIO_NAME);
     await expect(card.getByLabel('Vessel')).toHaveValue(VESSEL);
     await card.getByRole('button', { name: `Activate ${SCENARIO_NAME}` }).click();
     await expect(card.getByText(/Scenario activated on VES-001/)).toBeVisible();
@@ -153,7 +153,7 @@ test.describe('operator incident workflow', () => {
 
     // 7. Clear the scenario again
     await page.goto('/simulator');
-    const again = await scenarioCard(page, SCENARIO_NAME);
+    const again = scenarioCard(page, SCENARIO_NAME);
     await again.getByRole('button', { name: `Clear ${SCENARIO_NAME}` }).click();
     await expect(again.getByText(/Scenario cleared on VES-001/)).toBeVisible();
     await expect(page.getByRole('list', { name: 'Active scenarios' })).toHaveCount(0, {
@@ -173,7 +173,7 @@ test.describe('viewer role', () => {
 
     await page.goto('/simulator');
     await expect(page.getByText('Read-only access.')).toBeVisible();
-    const card = await scenarioCard(page, SCENARIO_NAME);
+    const card = scenarioCard(page, SCENARIO_NAME);
     const activate = card.getByRole('button', { name: `Activate ${SCENARIO_NAME}` });
     await expect(activate).toHaveAttribute('aria-disabled', 'true');
     await activate.hover();

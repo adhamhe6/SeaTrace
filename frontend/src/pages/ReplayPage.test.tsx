@@ -168,7 +168,7 @@ describe('errors and empty data', () => {
     renderApp({ route: `/replay?vessel=VES-001&equipment=ME1&from=${iso(-86400)}&to=${iso(0)}` });
     const alert = (await screen.findByText('Replay window too large')).closest(
       '[role="alert"]',
-    ) as HTMLElement;
+    )!;
     expect(alert).toHaveTextContent('Replay window too large');
     expect(alert).toHaveTextContent('limited to 7200 s');
     expect(alert).toHaveTextContent(/shorter time range/i);
@@ -302,7 +302,7 @@ describe('playback controls', () => {
     expect(cursorTime()).toHaveTextContent('10:00:30.000');
     const lines = screen.getAllByTestId('cursor-line');
     expect(lines.length).toBe(3); // state strip + two charts
-    for (const line of lines) expect((line as HTMLElement).style.left).toContain('64px + 0.5 *'); // 30 s of 60 s
+    for (const line of lines) expect((line).style.left).toContain('64px + 0.5 *'); // 30 s of 60 s
   });
 
   it('steps to the previous and next STORED sample', async () => {

@@ -333,7 +333,7 @@ describe('real-time updates reach the UI', () => {
     expect(screen.getByText(/no longer valid/i)).toBeInTheDocument();
   });
 
-  it('computes the clock offset from server time so local ages are not skewed', async () => {
+  it('computes the clock offset from server time so local ages are not skewed', () => {
     installApi();
     renderApp({ route: '/about' });
     const ws = FakeSocket.instances[0]!;
