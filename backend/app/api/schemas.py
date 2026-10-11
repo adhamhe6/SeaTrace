@@ -409,3 +409,18 @@ class SimulatorEventOut(ApiModel):
     params: dict[str, Any] | None
     result: str
     message: str | None
+
+
+# ---------------------------------------------------------------------------- anomaly detection
+class AnomalyAssessment(ApiModel):
+    vessel_code: str
+    equipment_code: str
+    status: Literal["insufficient_data", "normal", "watch", "anomaly", "not_applicable"]
+    score: float = Field(ge=0, le=1, description="0 = nominal, 1 = strongest combined drift")
+    explanation: str
+    features: dict[str, float | None]
+    alarm_active: bool = Field(
+        description="True if a vibration/temperature alarm is already active"
+    )
+    evaluated_at: datetime
+    disclaimer: str

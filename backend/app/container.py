@@ -18,6 +18,7 @@ from app.domain.alarms import AlarmEngine
 from app.opcua.client import ConnectionStatus, OpcUaSupervisor
 from app.realtime.hub import EventHub
 from app.services.alarm_service import AlarmService
+from app.services.anomaly_service import AnomalyService
 from app.services.catalog import Catalog, LiveState
 from app.services.fleet_service import FleetService
 from app.services.incident_service import IncidentService
@@ -50,6 +51,7 @@ class Container:
         self.fleet: FleetService
         self.telemetry: TelemetryService
         self.incidents: IncidentService
+        self.anomalies: AnomalyService
         self._tasks: list[asyncio.Task[None]] = []
         self._started = False
 
@@ -78,6 +80,7 @@ class Container:
         )
         self.telemetry = TelemetryService(self.sessionmaker, self.catalog, s)
         self.incidents = IncidentService(self.sessionmaker, self.catalog, self.alarms, s)
+        self.anomalies = AnomalyService(self.sessionmaker, self.catalog, self.live)
         self.ingestion.start()
         self._tasks.append(asyncio.create_task(self._alarm_ticker(), name="alarm-ticker"))
         if s.telemetry_retention_days > 0:

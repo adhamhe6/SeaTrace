@@ -565,3 +565,44 @@ async def test_recent_events_feed_merges_sources(client, op, container: Containe
     assert {"alarm", "system"} <= kinds
     assert [e["at"] for e in events] == sorted((e["at"] for e in events), reverse=True)
     assert any(e["vessel_code"] == "VES-001" for e in events if e["type"] == "alarm")
+
+
+# ------------------------------------------------------------------ anomaly detection API
+async def test_anomaly_endpoint_reports_insufficient_data_then_detects_combined_drift(
+    client, op, container
+):
+    import random
+    from datetime import UTC, datetime
+
+    r = (await client.get(f"{API}/anomalies/VES-001", headers=op)).json()
+    assert r["status"] == "insufficient_data" and r["disclaimer"] and r["equipment_code"] == "ME1"
+    # store 8 minutes of realistic data: stable, then vibration + temperature drift together
+    rnd = random.Random(3)
+    now = datetime.now(UTC)
+    start = now - timedelta(seconds=480)
+    batch = []
+    for i in range(480):
+        drift = max(0, i - 400)
+        ts = start + timedelta(seconds=i)
+        batch.append(sample("vibration", 3.0 + rnd.gauss(0, 0.15) + drift * 0.03, ts, received=ts))
+        batch.append(
+            sample("temperature", 82.0 + rnd.gauss(0, 0.3) + drift * 0.02, ts, received=ts)
+        )
+    for i in range(0, len(batch), 200):
+        await container.ingestion.process_batch(batch[i : i + 200])
+    r = (await client.get(f"{API}/anomalies/VES-001", headers=op)).json()
+    assert r["status"] == "anomaly" and r["score"] >= 0.6 and not r["alarm_active"]
+    assert "Combined drift" in r["explanation"] and r["features"]["vibration_z"] > 3
+    allv = (await client.get(f"{API}/anomalies", headers=op)).json()
+    assert {a["vessel_code"] for a in allv} == {"VES-001", "VES-002"}
+    assert (await client.get(f"{API}/anomalies/NOPE", headers=op)).status_code == 404
+    assert (await client.get(f"{API}/anomalies/VES-001")).status_code == 401
+
+
+async def test_anomaly_not_applicable_when_engine_stopped(client, op, container):
+    from datetime import UTC, datetime
+
+    await container.ingestion.process_batch([state("STOPPED", datetime.now(UTC))])
+    resp = await client.get(f"{API}/anomalies/VES-001", headers=op)
+    assert resp.status_code == 200, resp.text
+    assert resp.json()["status"] == "not_applicable"

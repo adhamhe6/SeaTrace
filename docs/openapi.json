@@ -745,6 +745,81 @@
         "title": "AlarmState",
         "type": "string"
       },
+      "AnomalyAssessment": {
+        "properties": {
+          "alarm_active": {
+            "description": "True if a vibration/temperature alarm is already active",
+            "title": "Alarm Active",
+            "type": "boolean"
+          },
+          "disclaimer": {
+            "title": "Disclaimer",
+            "type": "string"
+          },
+          "equipment_code": {
+            "title": "Equipment Code",
+            "type": "string"
+          },
+          "evaluated_at": {
+            "format": "date-time",
+            "title": "Evaluated At",
+            "type": "string"
+          },
+          "explanation": {
+            "title": "Explanation",
+            "type": "string"
+          },
+          "features": {
+            "additionalProperties": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "title": "Features",
+            "type": "object"
+          },
+          "score": {
+            "description": "0 = nominal, 1 = strongest combined drift",
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Score",
+            "type": "number"
+          },
+          "status": {
+            "enum": [
+              "insufficient_data",
+              "normal",
+              "watch",
+              "anomaly",
+              "not_applicable"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "vessel_code": {
+            "title": "Vessel Code",
+            "type": "string"
+          }
+        },
+        "required": [
+          "vessel_code",
+          "equipment_code",
+          "status",
+          "score",
+          "explanation",
+          "features",
+          "alarm_active",
+          "evaluated_at",
+          "disclaimer"
+        ],
+        "title": "AnomalyAssessment",
+        "type": "object"
+      },
       "Communication": {
         "enum": [
           "online",
@@ -2805,6 +2880,83 @@
         "summary": "Acknowledge an alarm (operator only)",
         "tags": [
           "alarms"
+        ]
+      }
+    },
+    "/api/v1/anomalies": {
+      "get": {
+        "operationId": "list_assessments_api_v1_anomalies_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/AnomalyAssessment"
+                  },
+                  "title": "Response List Assessments Api V1 Anomalies Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Experimental combined vibration/temperature drift assessment per vessel",
+        "tags": [
+          "anomaly-detection (experimental)"
+        ]
+      }
+    },
+    "/api/v1/anomalies/{vessel_code}": {
+      "get": {
+        "operationId": "get_assessment_api_v1_anomalies__vessel_code__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "vessel_code",
+            "required": true,
+            "schema": {
+              "title": "Vessel Code",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AnomalyAssessment"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Assessment for one vessel",
+        "tags": [
+          "anomaly-detection (experimental)"
         ]
       }
     },

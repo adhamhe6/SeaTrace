@@ -16,7 +16,17 @@ from sqlalchemy.exc import DBAPIError, OperationalError
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from app import __version__
-from app.api.routers import alarms, auth, fleet, incidents, simulator, system, telemetry, ws
+from app.api.routers import (
+    alarms,
+    anomalies,
+    auth,
+    fleet,
+    incidents,
+    simulator,
+    system,
+    telemetry,
+    ws,
+)
 from app.api.schemas import ErrorBody, ErrorResponse
 from app.config import Settings, get_settings
 from app.container import Container
@@ -153,6 +163,7 @@ def create_app(settings: Settings | None = None, container: Container | None = N
         alarms.router,
         incidents.router,
         simulator.router,
+        anomalies.router,
         ws.router,
     ):
         app.include_router(router, prefix=API_PREFIX)
