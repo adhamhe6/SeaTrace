@@ -148,8 +148,11 @@ std::vector<MeasurementSpec> parse_measurements(const json& equipment, Equipment
         if (!allowed.empty()) allowed += ", ";
         allowed += t.name;
       }
-      fail(item_path, "unknown measurement '" + name + "' for " + std::string(to_string(type)) +
-                          " (allowed: " + allowed + ")");
+      fail(item_path, "unknown measurement '" + name + "' for " +
+                          std::string(to_string(
+                              type)) +  // NOLINT(performance-inefficient-string-concatenation)
+                          " (allowed: " +
+                          allowed + ")");
     }
     const auto slot = static_cast<std::size_t>(it - templates.begin());
     if (by_template[slot] != nullptr) fail(item_path, "duplicate measurement '" + name + "'");

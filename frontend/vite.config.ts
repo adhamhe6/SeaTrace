@@ -5,6 +5,10 @@ import { defineConfig } from 'vite';
 
 const backend = process.env.SEATRACE_BACKEND_URL ?? 'http://localhost:8000';
 
+/** Same policy as nginx.conf, so `npm run preview` surfaces CSP violations before deployment. */
+const csp =
+  "default-src 'self'; connect-src 'self' ws: wss:; img-src 'self' data:; style-src 'self' 'unsafe-inline'; base-uri 'self'; form-action 'self'; object-src 'none'; frame-ancestors 'none'";
+
 export default defineConfig({
   plugins: [react()],
   resolve: {
@@ -19,6 +23,7 @@ export default defineConfig({
   },
   preview: {
     port: 4173,
+    headers: { 'Content-Security-Policy': csp },
     proxy: {
       '/api': { target: backend, changeOrigin: false, ws: true },
     },
