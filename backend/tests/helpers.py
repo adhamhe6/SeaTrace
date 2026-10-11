@@ -9,8 +9,8 @@ from sqlalchemy import text
 
 T0 = datetime(2026, 3, 1, 12, 0, 0, tzinfo=UTC)
 GOOD = 0
-BAD_SENSOR_FAILURE = 0x80300000
-UNCERTAIN = 0x40950000
+BAD_SENSOR_FAILURE = 0x808C0000
+UNCERTAIN = 0x40930000
 
 
 def sample(

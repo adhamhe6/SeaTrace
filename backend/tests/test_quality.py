@@ -13,9 +13,9 @@ T = datetime(2026, 1, 1, tzinfo=UTC)
     [
         (None, Quality.GOOD),
         (0, Quality.GOOD),
-        (0x80300000, Quality.BAD),
+        (0x808C0000, Quality.BAD),
         (0x80000000, Quality.BAD),
-        (0x40950000, Quality.UNCERTAIN),
+        (0x40930000, Quality.UNCERTAIN),
         (0x00960000, Quality.GOOD),
     ],
 )
@@ -35,8 +35,8 @@ def test_status_code_severity_mapping(status, expected):
         ("12", 0, Quality.INVALID, None),
         (True, 0, Quality.INVALID, None),
         (None, 0, Quality.INVALID, None),
-        (50.0, 0x80300000, Quality.BAD, None),
-        (50.0, 0x40950000, Quality.UNCERTAIN, 50.0),
+        (50.0, 0x808C0000, Quality.BAD, None),
+        (50.0, 0x40930000, Quality.UNCERTAIN, 50.0),
     ],
 )
 def test_classify(raw, status, quality, value):

@@ -103,6 +103,18 @@ class OpcUaSupervisor:
         await self._teardown()
         self._set_state("stopped")
 
+    async def refresh_active_scenarios(self) -> None:
+        """Read ActiveScenarios directly so a command response never shows a stale subscription copy."""
+        client, ns = self._client, self._ns
+        if not self.connected or client is None or ns is None:
+            return
+        node = client.get_node(ua.NodeId(f"{SIMULATOR_NAME}.ActiveScenarios", ns))
+        try:
+            value = await asyncio.wait_for(node.read_value(), self._s.opcua_request_timeout_s)
+        except (TimeoutError, OSError, ua.UaError):
+            return  # keep the last subscribed value; the subscription will catch up
+        self.status.active_scenarios = _parse_scenarios(value)
+
     async def call_method(self, method_name: str, *args: ua.Variant) -> list[Any]:
         """Call a method on the Simulator object using the established session."""
         client, ns = self._client, self._ns

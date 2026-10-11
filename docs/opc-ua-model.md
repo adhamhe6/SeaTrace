@@ -71,13 +71,13 @@ scenario is cleared/reset, then restarts through `STARTING`.
 | Situation | StatusCode | Backend quality |
 |---|---|---|
 | Normal | `Good` (0x00000000) | `good` |
-| Sensor failure scenario (`sensor_failure`) | `BadSensorFailure` (0x80300000) | `bad` |
+| Sensor failure scenario (`sensor_failure`) | `BadSensorFailure` (0x808C0000) | `bad` |
 | Sensor reading beyond physical limits (`sensor_out_of_range`) | `Good`, absurd value | backend plausibility check → `invalid` |
 | Stuck sensor (`sensor_stuck`) | `Good`, value constant, SourceTimestamp advancing | backend flat-line detector → `stuck` |
 | Telemetry interruption (`telemetry_interruption`) | `Good`, SourceTimestamp **stops advancing** | backend staleness detector → `stale` |
 | Value outside the sensor's nominal band but plausible | `Good` | `good` (alarm engine decides) |
 
-`UncertainSensorNotAccurate` (0x40950000) is published for ~10 s after a sensor recovers (`uncertain`).
+`UncertainSensorNotAccurate` (0x40930000) is published for ~10 s after a sensor recovers (`uncertain`).
 
 ## Control methods
 
@@ -140,3 +140,37 @@ Clearing a scenario returns the process to normal along a physical recovery curv
 * `SIM_SECURITY_MODE=none`: unsecured development endpoint (also allows username/password on an unencrypted channel). Never expose it
   beyond a developer machine.
 * Anonymous access is read-only; control methods need the control account.
+
+## Deviations and implementation notes (simulator)
+
+Recorded by the simulator implementation (`simulator/`). Items 1-2 are genuine deviations from the text above; the rest
+clarify behaviour the contract leaves open.
+
+1. **Numeric StatusCode values.** The first draft of this contract printed wrong numbers for the two named codes. The standard
+   values (OPC UA specification, open62541, asyncua) are `BadSensorFailure = 0x808C0000` and `UncertainSensorNotAccurate = 0x40930000`;
+   the table above was corrected and the simulator emits these. Clients should still classify by the severity bits (top two bits:
+   `00` good, `01` uncertain, `10` bad), as the backend does (`app/domain/quality.py`).
+2. **ServerTimestamp.** open62541 stamps the ServerTimestamp with the time of the *read / notification*, not the time of the write
+   (the stack overwrites it; there is no supported way to keep a stored value). Only **SourceTimestamp** is meaningful for freshness
+   and it follows the contract (simulation time of the tick, frozen during `telemetry_interruption`).
+3. **Namespace index.** The server's ApplicationUri is `urn:seatrace:simulator`, identical to the namespace URI, so the namespace
+   is index **1** (not 2). Resolve it with `get_namespace_index("urn:seatrace:simulator")`.
+4. **Endpoint URL.** The server answers on any path of `opc.tcp://<host>:<port>`; `/seatrace/simulator` is accepted but not required.
+5. **Method argument types are enforced by the server.** `durationSeconds` must be sent as a real `UInt32` variant
+   (asyncua: `ua.Variant(30, ua.VariantType.UInt32)`); a plain Python `int` is sent as Int64 and fails with `BadInvalidArgument`.
+   Anonymous callers receive `BadUserAccessDenied` (also for malformed calls). The `UserExecutable` attribute of the methods is
+   `false` for anonymous sessions.
+6. **`ActiveScenarios` entries** for the server-wide `opcua_outage` carry `"vessel_id": ""`. Its `ends_at` is
+   `start + 1 s + duration` (the listener goes down 1 s after the call and stays down for `durationSeconds`).
+7. **Method semantics.** `ActivateScenario` with unknown scenario *and* unknown vessel reports the scenario error first. `opcua_outage`
+   rejects `durationSeconds > 120` with `accepted=false`. `ClearScenario` of a scenario that is not active returns `accepted=false`
+   (clearing "all of a vessel" with nothing active returns `accepted=true`). `ClearScenario("", "opcua_outage")` cancels a pending outage.
+8. **Quality after recovery.** The 10 s `UncertainSensorNotAccurate` phase applies to the three sensor scenarios
+   (`sensor_stuck`, `sensor_out_of_range`, `sensor_failure`); during it `SensorHealth` is `DEGRADED`, while a fault is active it is
+   `FAULT`. `telemetry_interruption` has no uncertain phase: publishing simply resumes.
+9. **Engine restart interlock.** After a trip the engine stays `TRIPPED` until its `engine_overheat` scenario is cleared *and* the jacket
+   has cooled below the restart temperature (default 95 deg C) *and* the cooling system is effective again; only then
+   `STARTING` (~15 s) -> `RUNNING`. A configured `STOPPED` machine stays stopped unless `auto_start_after_s` is set in `fleet.json`.
+10. **Telemetry interruption at start-up.** If a vessel starts with `telemetry_interruption` active its nodes report
+    `BadWaitingForInitialData` until the first publish.
+11. **Anonymous access** is also available in `secure` mode (read-only); the control methods need the username token.

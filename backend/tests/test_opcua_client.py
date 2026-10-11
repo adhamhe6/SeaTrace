@@ -366,3 +366,18 @@ async def test_scenarios_catalogue(client, op):
 
 
 _ = C
+
+
+async def test_command_response_contains_fresh_active_scenarios(connected, sim, client, op):
+    """The simulator state in the response is read after the command, never a stale subscription copy."""
+    await sim.set_active_scenarios(
+        '[{"scenario_id":"engine_overheat","vessel_id":"VES-001","started_at":"2026-01-01T12:00:00.000Z","ends_at":null}]'
+    )
+    r = await client.post(
+        "/api/v1/simulator/scenarios/engine_overheat/activate",
+        headers=op,
+        json={"vessel_code": "VES-001"},
+    )
+    assert r.status_code == 200
+    active = r.json()["simulator"]["active_scenarios"]
+    assert [a["scenario_id"] for a in active] == ["engine_overheat"]

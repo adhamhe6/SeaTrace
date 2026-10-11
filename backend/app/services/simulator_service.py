@@ -294,6 +294,8 @@ class SimulatorService:
                 "ms": round((time.monotonic() - started) * 1000),
             },
         )
+        if accepted:
+            await self._sup.refresh_active_scenarios()
         status = self.status()
         self._hub.publish(
             "scenario",

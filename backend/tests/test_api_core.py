@@ -652,3 +652,15 @@ async def test_database_outage_gives_503_not_ready_and_recovers(client, op, cont
         await dead.dispose()
     assert (await client.get(f"{API}/health/ready")).status_code == 200
     assert (await client.get(f"{API}/alarms", headers=op)).status_code == 200
+
+
+async def test_unresolvable_database_host_is_503_not_500(client, op, container, monkeypatch):
+    """A stopped database container surfaces as socket.gaierror (DNS) from the driver, not a DBAPIError."""
+    import socket
+
+    async def boom(*a, **kw):
+        raise socket.gaierror(-3, "Temporary failure in name resolution")
+
+    monkeypatch.setattr(container.alarms, "list_alarms", boom)
+    r = await client.get(f"{API}/alarms", headers=op)
+    assert r.status_code == 503 and r.json()["error"]["code"] == "database_unavailable"

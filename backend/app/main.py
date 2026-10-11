@@ -143,7 +143,7 @@ def create_app(settings: Settings | None = None, container: Container | None = N
 
     @app.exception_handler(OperationalError)
     @app.exception_handler(DBAPIError)
-    @app.exception_handler(ConnectionError)
+    @app.exception_handler(OSError)  # socket.gaierror (DNS), refused/reset connections, timeouts
     async def _db(request: Request, exc: Exception) -> JSONResponse:
         log.error("database error", extra={"error": type(exc).__name__, "path": request.url.path})
         return _error(
