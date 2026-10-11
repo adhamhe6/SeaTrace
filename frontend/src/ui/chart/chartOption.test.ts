@@ -93,7 +93,13 @@ interface Opt {
     connectNulls: boolean;
     sampling: string;
     markArea: { data: Record<string, unknown>[][] };
-    markLine: { data: { xAxis: number; lineStyle: { type: string }; label: { show: boolean; formatter: string } }[] };
+    markLine: {
+      data: {
+        xAxis: number;
+        lineStyle: { type: string };
+        label: { show: boolean; formatter: string };
+      }[];
+    };
   }[];
 }
 const build = (s: ChartSpec) => buildChartOption(s) as unknown as Opt;
@@ -105,9 +111,7 @@ describe('buildChartOption', () => {
     expect(o.useUTC).toBe(true);
     expect(o.yAxis.name).toBe('°C');
     expect(o.animation).toBe(false);
-    expect(build(spec({ timeMode: 'local' })).useUTC).toBe(
-      false,
-    );
+    expect(build(spec({ timeMode: 'local' })).useUTC).toBe(false);
   });
   it('draws nulls as breaks (no connection) and enables sampling for big series', () => {
     const o = build(spec());

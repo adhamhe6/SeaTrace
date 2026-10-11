@@ -376,9 +376,9 @@ describe('Simulator controls', () => {
       expect(api.calls.filter((call) => call.method === 'POST')).toHaveLength(0);
       const activate = c.getByRole('button', { name: 'Activate Engine overheating' });
       await user.hover(activate);
-      expect(
-        await within(activate.closest('.st-tip')!).findByRole('tooltip'),
-      ).toHaveTextContent('Operator role required');
+      expect(await within(activate.closest('.st-tip')!).findByRole('tooltip')).toHaveTextContent(
+        'Operator role required',
+      );
     });
   });
 });
